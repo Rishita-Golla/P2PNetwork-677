@@ -1,0 +1,16 @@
+Node Id 1---->Oct 17,2022 20:08 Buyer [4] is looking to buy [fish]. Will send a reply to that buyer.
+Node Id 1---->Oct 17,2022 20:08 Selling product fish
+
+Node Id 1---->Oct 17,2022 20:08 Acquired lock
+Node Id 1---->Oct 17,2022 20:08 Current count of product fish is 1
+Node Id 1---->Oct 17,2022 20:08 Restocking the product with fish
+Node Id 1---->Oct 17,2022 20:08 Count after buy is 1
+Node Id 1---->Oct 17,2022 20:08 Released lock
+Node Id 1---->Oct 17,2022 20:08 Buyer [4] is looking to buy [fish]. Will send a reply to that buyer.
+Node Id 1---->Oct 17,2022 20:08 Selling product fish
+
+Node Id 1---->Oct 17,2022 20:08 Acquired lock
+Node Id 1---->Oct 17,2022 20:08 Current count of product fish is 1
+Node Id 1---->Oct 17,2022 20:08 Restocking the product with fish
+Node Id 1---->Oct 17,2022 20:08 Count after buy is 1
+Node Id 1---->Oct 17,2022 20:08 Released lock
