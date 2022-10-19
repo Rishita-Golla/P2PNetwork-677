@@ -7,7 +7,7 @@ public class Message {
     private String transactionId;
     private int hopCount;
     private List<Integer> path;
-    private int SellerID;
+    private int SellerID; //set seller ID
 
     public int getSellerID() {
         return SellerID;

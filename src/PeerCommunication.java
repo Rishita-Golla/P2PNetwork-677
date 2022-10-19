@@ -1,8 +1,22 @@
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class PeerCommunication {
 
+    public static HashMap<Integer, String> peerIdURLMap;
+    public static HashMap<Integer, List<Integer>> neighborPeerIDs;
+
+    public void processMessageForward(Message m) {};
+    public void processReply(Message m) throws InterruptedException {};
+
+    public PeerCommunication(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
+        this.peerIdURLMap = peerIdURLMap;
+        this.neighborPeerIDs = neighborPeerIDs;
+    }
+
+    // A seller checks if he has the item, else broadcasts
+    // A buyer directly broadcats the message
     public void checkOrBroadcastMessage(Message m, String productName, int ID, List<Integer> neighborPeerID) { //can send map<ID, neigh>
         if (m.getRequestedItem().equals(productName)) {
             replyBackwards(m);

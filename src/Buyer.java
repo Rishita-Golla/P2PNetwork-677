@@ -1,21 +1,34 @@
-import java.util.Arrays;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 public class Buyer extends PeerCommunication{
 
-    public static String buyerItem;
-    protected List<Integer> neighborPeerID;
+    public String buyerItem;
     protected int buyerID;
-  //  public static final List<String> possibleItems = Arrays.asList("FISH","SALT","BOAR");
 
-    public void Buyer(String buyerItem, List<Integer> neighborPeerID) {
-        this.buyerItem = buyerItem;
-        this.neighborPeerID = neighborPeerID;
+    public Buyer(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
+        super(peerIdURLMap, neighborPeerIDs);
     }
 
     public  boolean buyItemDirectlyFromSeller(int sellerId) {
         //get Seller address -> Seller
+        try {
+            URL url = new URL(peerIdURLMap.get(sellerId));
+            Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+            RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("remoteInterface");
+            remoteInterface.sellItem(this.buyerItem); // implement at interface's place
+            //create a new class for implementing Remote Interface
+
+        } catch (MalformedURLException | RemoteException | NotBoundException e) {
+            e.printStackTrace();
+        }
         return Seller.sellItem(buyerItem);
     }
 
@@ -26,7 +39,7 @@ public class Buyer extends PeerCommunication{
     }
 
     public void processMessageForward(Message m) {
-        checkOrBroadcastMessage(m, "", buyerID, neighborPeerID);
+        checkOrBroadcastMessage(m, "", buyerID, neighborPeerIDs.get(buyerID));
     }
 
     public void processReply(Message m) {
