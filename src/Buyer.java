@@ -4,32 +4,35 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Buyer extends PeerCommunication{
 
     public String buyerItem;
     protected int buyerID;
 
+    public Buyer(int buyerID, String buyerItem) {
+        super();
+        this.buyerID = buyerID;
+        this.buyerItem = buyerItem;
+    }
+
     public Buyer(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
         super(peerIdURLMap, neighborPeerIDs);
     }
 
-    public  boolean buyItemDirectlyFromSeller(int sellerId) {
-        //get Seller address -> Seller
+    public boolean buyItemDirectlyFromSeller(int sellerId) {
         try {
             URL url = new URL(peerIdURLMap.get(sellerId));
             Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
             RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("remoteInterface");
-            remoteInterface.sellItem(this.buyerItem); // implement at interface's place
+            return remoteInterface.sellItem(this.buyerItem); // implement at interface's place
             //create a new class for implementing Remote Interface
 
-        } catch (MalformedURLException | RemoteException | NotBoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return Seller.sellItem(buyerItem);
+        return false;
     }
 
     public void pickNewBuyerItem() {
@@ -39,7 +42,7 @@ public class Buyer extends PeerCommunication{
     }
 
     public void processMessageForward(Message m) {
-        checkOrBroadcastMessage(m, "", buyerID, neighborPeerIDs.get(buyerID));
+        checkOrBroadcastMessage(m, "", buyerID);
     }
 
     public void processReply(Message m) {
@@ -48,6 +51,16 @@ public class Buyer extends PeerCommunication{
         } else { // an intermediate node
             replyBackwards(m);
         }
+    }
+
+    public void startLookUp() {
+        String lookupId = UUID.randomUUID().toString();
+        Message m = new Message();
+        m.setLookUpId(lookupId);
+        m.setRequestedItem(buyerItem);
+
+        checkOrBroadcastMessage(m, "", buyerID);
+
     }
 
 

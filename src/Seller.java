@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +7,6 @@ public class Seller extends PeerCommunication{
 
     static String sellerItem;
     static int currItemCount;
-    static int maxItemCount; //change to constant
     int sellerID;
     private static Semaphore semaphore = new Semaphore(1);
 
@@ -42,11 +40,11 @@ public class Seller extends PeerCommunication{
     public static void stockItems() {
         Random rand = new Random();
         sellerItem = Constants.POSSIBLE_ITEMS.get(rand.nextInt(Constants.POSSIBLE_ITEMS.size()));
-        currItemCount = maxItemCount;
+        currItemCount = Constants.MAX_ITEM_COUNT;
     }
 
     public void processMessageForward(Message m) {
-        checkOrBroadcastMessage(m, sellerItem, sellerID, neighborPeerIDs.get(sellerID));
+        checkOrBroadcastMessage(m, sellerItem, sellerID);
     }
 
     public void processReply(Message m) {

@@ -4,10 +4,10 @@ import java.util.List;
 public class Message {
 
     private String requestedItem;
-    private String transactionId;
+    private String lookUpId;
     private int hopCount;
     private List<Integer> path;
-    private int SellerID; //set seller ID
+    private int SellerID; //set seller ID - during transaction
 
     public int getSellerID() {
         return SellerID;
@@ -30,12 +30,12 @@ public class Message {
         this.requestedItem = requestedItem;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getLookUpId() {
+        return lookUpId;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setLookUpId(String lookUpId) {
+        this.lookUpId = lookUpId;
     }
 
     public int getHopCount() {
