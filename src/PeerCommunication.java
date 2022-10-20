@@ -4,10 +4,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class PeerCommunication {
 
@@ -15,6 +13,8 @@ public class PeerCommunication {
     public static HashMap<Integer, List<Integer>> neighborPeerIDs = new HashMap<>();
     public static HashMap<Integer, String> rolesMap = new HashMap<Integer, String>();
     public static List<String> processedLookUps = new ArrayList<>();
+    static SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    static Date date = new Date(System.currentTimeMillis());
 
     public PeerCommunication() {
 
@@ -35,27 +35,27 @@ public class PeerCommunication {
     // A seller checks if he has the item, else broadcasts
     // A buyer directly broadcasts the message
     public static void checkOrBroadcastMessage(Message m, String productName, int ID, String role) throws MalformedURLException { //can send map<ID, neigh>
-        System.out.println(PeerCommunication.peerIdURLMap);
-        System.out.println("************** in client");
-        System.out.println(PeerCommunication.neighborPeerIDs);
+        System.out.println(formatter.format(date)+PeerCommunication.peerIdURLMap);
+        //System.out.println("************** in client");
+        System.out.println(formatter.format(date)+PeerCommunication.neighborPeerIDs);
 
-        System.out.println("Message props: "+m.getHopCount()+m.getPath());
+        System.out.println(formatter.format(date)+" Message props: "+m.getHopCount()+m.getPath());
 
         if(processedLookUps.contains(m.getLookUpId())){
-            System.out.println("Already found this lookupID:"+m.getLookUpId());
+            System.out.println(formatter.format(date)+" Processed lookUpId "+m.getLookUpId()+", returning");
             return;
         }
         processedLookUps.add(m.getLookUpId());
 
         if (m.getRequestedItem().equals(productName)) {
-            System.out.println("Seller "+ ID + " has item " + m.getRequestedItem()+" .Starting backward reply ");
+            System.out.println(formatter.format(date)+" Seller "+ ID + " has item " + m.getRequestedItem()+" .Starting backward reply ");
             m.setSellerID(ID);
             replyBackwards(m);
             return;
         }
 
         if(m.getHopCount() >= Constants.MAX_HOP) {
-            System.out.println("Reached maximum hop count at ID: "+ID+", returning");
+            System.out.println(formatter.format(date)+" Reached maximum hop count at ID: "+ID+", returning");
             return;
         }
 
@@ -81,14 +81,13 @@ public class PeerCommunication {
     public static void replyBackwards(Message m) {
         //set "Reply" in message and let node handle
         int prevID = m.removeLastNodeInPath();
-        System.out.println("Replying backwards to ID: "+ prevID);
+        System.out.println(formatter.format(date)+" Replying backwards to ID: "+ prevID);
         String role = rolesMap.get(prevID);
         try {
             URL url = new URL(peerIdURLMap.get(prevID));
             Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
             RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
             remoteInterface.replyBackwards(m, role); // implement at interface's place
-            //create a new class for implementing Remote Interface
 
         } catch (Exception e) {
             e.printStackTrace();

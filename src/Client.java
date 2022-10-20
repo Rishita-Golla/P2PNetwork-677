@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -16,19 +17,10 @@ public class Client {
         String configFilePath = args[2];
         String pathToCommonFile = args[1];
         String[] products = args[3].split(",");
-//        logger = Logger.getLogger("ClientLog");
-//        FileHandler fh;
-//        try {
-//            // This block configure the logger with handler and formatter
-//            fh = new FileHandler(String.format("Node_%d_client.log", id), true);
-//            MyLogFormatter formatter = new MyLogFormatter(id);
-//            fh.setFormatter(formatter);
-//            logger.addHandler(fh);
-//            // the following statement is used to log any messages
-//        } catch (SecurityException | IOException exception) {
-//            exception.printStackTrace();
-//            System.out.println("Failed to setup logging.");
-//        }
+
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+
         buyer = new Buyer(id, products[0]);
         Properties prop;
         try (InputStream input = new FileInputStream(pathToCommonFile)) {
@@ -64,7 +56,7 @@ public class Client {
         serverThread.start();
         while(true){
             try {
-                System.out.println("Sleeping for two seconds......");
+                System.out.println(formatter.format(date)+" Thread sleep - 2 seconds");
                 Thread.sleep(2000);
             }
             catch(InterruptedException ex)

@@ -2,6 +2,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
@@ -11,6 +12,8 @@ public class Buyer extends PeerCommunication{
     protected int buyerID;
     private static Semaphore semaphore = new Semaphore(1);
     List<String> timedOutReplies = new ArrayList<>();
+    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    Date date = new Date(System.currentTimeMillis());
 
     public Buyer(int buyerID, String buyerItem) {
         super();
@@ -23,7 +26,7 @@ public class Buyer extends PeerCommunication{
     }
 
     public boolean buyItemDirectlyFromSeller(int sellerId) {
-        System.out.println("Trying to buy item directly from Seller ID: " + sellerId);
+        System.out.println(formatter.format(date)+" Trying to buy item directly from Seller ID: " + sellerId);
         try {
             URL url = new URL(peerIdURLMap.get(sellerId));
             Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
@@ -40,7 +43,7 @@ public class Buyer extends PeerCommunication{
         int size = Constants.POSSIBLE_ITEMS.size();
         int index = Constants.POSSIBLE_ITEMS.indexOf(buyerItem);
         buyerItem = Constants.POSSIBLE_ITEMS.get((index+1)%size);
-        System.out.println("Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
+        System.out.println(formatter.format(date)+"Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
     }
 
     public void processMessageForward(Message m) throws MalformedURLException {
@@ -51,15 +54,15 @@ public class Buyer extends PeerCommunication{
         try {
             semaphore.acquire();
             if(timedOutReplies.contains(m.getLookUpId())) {
-                System.out.println("Ignoring timed out reply for: "+m.getLookUpId());
+                System.out.println(formatter.format(date)+"Ignoring timed out reply for: "+m.getLookUpId());
             }
             if (m.getPath().isEmpty()) { // reached initial buyer node
-                System.out.println("Reached initial buyer in reply backward path");
+                System.out.println(formatter.format(date)+" Reached initial buyer in reply backward path");
                 if (buyItemDirectlyFromSeller(m.getSellerID())) {
                     //add to processed LookUps
-                    System.out.println("Bought item " + m.getRequestedItem() + " from Seller " + "with ID " + m.getSellerID());
+                    System.out.println(formatter.format(date)+" Bought item " + m.getRequestedItem() + " from Seller " + "with ID " + m.getSellerID());
                     timedOutReplies.add(m.getLookUpId());
-                    System.out.println("Added " + m.getLookUpId() + " to already processed lookUp Ids");
+                    System.out.println(formatter.format(date)+" Added " + m.getLookUpId() + " to already processed lookUp Ids");
                     pickNewBuyerItem();
                 }
             } else { // an intermediate node
@@ -78,7 +81,7 @@ public class Buyer extends PeerCommunication{
         m.setRequestedItem(buyerItem);
         m.setPath(new ArrayList<>());
 
-        System.out.println("Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
+        System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
 
         checkOrBroadcastMessage(m, "", buyerID, "buyer");
 
@@ -96,8 +99,7 @@ public class Buyer extends PeerCommunication{
     public void discardReply(String lookupId) {
         try {
             semaphore.acquire();
-            System.out.println("Did not get a reply for the lookup request of " + buyerID +
-                        "Timing out and ignoring future replies for this request");
+            System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + "and lookUp"+ lookupId);
             timedOutReplies.add(lookupId);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block

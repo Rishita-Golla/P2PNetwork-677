@@ -6,6 +6,7 @@ import java.net.URL;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -19,16 +20,18 @@ class ServerThread implements Runnable {
         this.url = PeerCommunication.peerIdURLMap.get(ID);
         this.ID = ID;
     }
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    Date date = new Date(System.currentTimeMillis());
 
     @Override
     public void run() {
-        System.out.printf("Node %d running as a Lookup server on url %s..\n", this.ID, url);
+        System.out.printf(formatter.format(date)+" Node %d running as a Lookup server on url %s..\n", this.ID, url);
         int port;
         try {
             port = new URL(this.url).getPort();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to start the Server");
+            throw new RuntimeException(" Failed to start the Server");
         }
         try {
             RemoteInterfaceImpl obj = new RemoteInterfaceImpl();
@@ -41,10 +44,6 @@ class ServerThread implements Runnable {
             e.printStackTrace();
             throw new RuntimeException("Failed to start the server");
         }
-//        if(role.equals("Seller")){
-//            //Seller obj = new Seller();
-//            Seller.sellerItem = sellerItem;
-//        }
 
     }
     public void start () {
@@ -59,8 +58,8 @@ class RemoteInterfaceImpl implements RemoteInterface{
 
     int nodeID;
     String productName;
-
-   // public static Buyer buyer;
+    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    Date date = new Date(System.currentTimeMillis());
 
     public RemoteInterfaceImpl(){
 
@@ -72,7 +71,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     public void checkOrBroadcastMessage(Message m, int peerID, String role) throws MalformedURLException {
-        System.out.println("Reached new node for communication "+ peerID + " item"+ Seller.sellerItem); //not working
+        System.out.println(formatter.format(date)+" Reached new node for communication "+ peerID + " item"+ Seller.sellerItem);
         if(role.equals("buyer"))
             PeerCommunication.checkOrBroadcastMessage(m, "", peerID, "buyer");
         else
@@ -80,12 +79,12 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     public boolean sellItem(String requestedItem) {
-        System.out.println("In RemoteImpl sellItem");
+       // System.out.println("In RemoteImpl sellItem");
         return Seller.sellItem(requestedItem); //Server.java
     }
 
     public void replyBackwards(Message m, String role) {
-        System.out.println("In RemoteInterImpl replyBackwards");
+      //  System.out.println("In RemoteInterImpl replyBackwards");
         if(role.equals("buyer"))
             Client.buyer.processReply(m);
         else
@@ -101,6 +100,11 @@ public class Server {
         String pathToCommonFile;
         String[] productsToSell;
         String[] productsToRestock;
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+
+       // System.out.println(formatter.format(date));
+
         try {
             ID = Integer.parseInt(args[0]);
             pathToCommonFile = args[1];
@@ -111,20 +115,12 @@ public class Server {
             else
                 productsToRestock = productsToSell;
 
-        }catch (Exception e){
+        }catch (Exception e){ //change
             System.err.println("Incorrect arguments. Usage java -c destination Server {id} {pathToConfig} {products to sell separated by ,} {maxCount} {[optional] products to restock separated by ,}");
             throw e;
         }
 
         Properties prop;
-        // Read urls of all the nodes in my peer to peer network.
-        /*
-         * Config file to have below structure
-         * NodeID=<URLofNode>,<Comma separated list of neighbors>
-         * 1=http://127.0.0.1:5000,2,3
-         * 2=http://127.0.0.1:5001,3,1
-         * 3=http://127.0.0.1:5002,1,3
-         */
         try (InputStream input = new FileInputStream(pathToCommonFile)) {
             prop = new Properties();
             prop.load(input);
@@ -162,9 +158,11 @@ public class Server {
         Seller.setSellerItem(productsToSell[0]);
         ServerThread serverThread = new ServerThread(ID);
         serverThread.start();
-        System.out.println(PeerCommunication.peerIdURLMap);
-        System.out.println("**************");
-        System.out.println(PeerCommunication.neighborPeerIDs);
+//        System.out.println(formatter.format(date)+" PeerURLMap "+PeerCommunication.peerIdURLMap);
+//        System.out.println("**************");
+//        System.out.println(formatter.format(date)+ " PeerNeighborsMap "+PeerCommunication.neighborPeerIDs);
+        System.out.println(formatter.format(date)+" I am node:+"+ID+"selling item:"+Seller.sellerItem);
+
 
 //        for (Map.Entry<Integer,String> entry : sellerItems.entrySet()) {
 //
