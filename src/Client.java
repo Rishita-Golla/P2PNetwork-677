@@ -35,7 +35,10 @@ public class Client {
             prop = new Properties();
             prop.load(input);
             for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-                PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),(String) entry.getValue());
+                String value = (String) entry.getValue();
+                String[] peersAndRoles = value.split(",");
+                PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
+                PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
             }
         }
 
@@ -48,31 +51,26 @@ public class Client {
                 Integer key = Integer.parseInt((String) entry.getKey());
                 String value = (String) entry.getValue();
                 String[] URLandNeighbors = value.split(",");
-                //Nodes.nodes.put(key, URLandNeighbors[0]);
-                if(key == id) {
-                    for (int i = 1; i < URLandNeighbors.length; i++)
-                        list.add(Integer.parseInt(URLandNeighbors[i]));
-                    PeerCommunication.neighborPeerIDs.put(key,list);
-                }
+                for (int i = 1; i < URLandNeighbors.length; i++)
+                    list.add(Integer.parseInt(URLandNeighbors[i]));
+                PeerCommunication.neighborPeerIDs.put(key,list);
+
             }
         } catch (IOException ex) {
             ex.printStackTrace();
             throw ex;
         }
-        ServerThread serverThread = new ServerThread(id, "Client","");
+        ServerThread serverThread = new ServerThread(id);
         serverThread.start();
         while(true){
             try {
                 System.out.println("Sleeping for two seconds......");
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             }
             catch(InterruptedException ex)
             {
                 Thread.currentThread().interrupt();
             }
-
-          //  String productName = buyer.pickProduct();
-            System.out.println(String.format("Sending lookup request for product %s", products[0]));
 
             // Passing productName as empty string because a buyer doesn't sell any product.
             // Lookup is used by the server nodes too where they pass the product name they sell to this.

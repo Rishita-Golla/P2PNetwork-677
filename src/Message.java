@@ -1,6 +1,6 @@
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Message implements Serializable {
 
@@ -59,9 +59,8 @@ public class Message implements Serializable {
     }
 
     public int removeLastNodeInPath() { //check return type
-        int lastIndex = path.size()-1;
-        path.remove(path.get(lastIndex));
-
-        return lastIndex;
+        int lastNode = path.get(path.size()-1);
+        path.remove(path.get(path.size()-1));
+        return lastNode;
     }
 }

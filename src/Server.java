@@ -13,15 +13,11 @@ import java.util.logging.Logger;
 class ServerThread implements Runnable {
     String url;
     int ID;
-    String sellerItem;
     String role;
     Thread t;
-    public ServerThread(int ID, String role, String item){
+    public ServerThread(int ID){
         this.url = PeerCommunication.peerIdURLMap.get(ID);
-        //this.url = Nodes.nodes.get(ID);
         this.ID = ID;
-        this.role = role;
-        this.sellerItem = item;
     }
 
     @Override
@@ -45,10 +41,10 @@ class ServerThread implements Runnable {
             e.printStackTrace();
             throw new RuntimeException("Failed to start the server");
         }
-        if(role.equals("Seller")){
-            //Seller obj = new Seller();
-            Seller.sellerItem = sellerItem;
-        }
+//        if(role.equals("Seller")){
+//            //Seller obj = new Seller();
+//            Seller.sellerItem = sellerItem;
+//        }
 
     }
     public void start () {
@@ -64,7 +60,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
     int nodeID;
     String productName;
 
-    public static Buyer buyer;
+   // public static Buyer buyer;
 
     public RemoteInterfaceImpl(){
 
@@ -75,73 +71,28 @@ class RemoteInterfaceImpl implements RemoteInterface{
         this.productName = productName;
     }
 
-    @Override
-    public void checkOrBroadcastMessage(Message m, String productName, int ID) throws MalformedURLException {
-        System.out.println("Reached new node for communication "+ ID + " item"+ Seller.sellerItem); //not working
-        PeerCommunication.checkOrBroadcastMessage(m, Seller.sellerItem, ID);
-        return;
+    public void checkOrBroadcastMessage(Message m, int peerID, String role) throws MalformedURLException {
+        System.out.println("Reached new node for communication "+ peerID + " item"+ Seller.sellerItem); //not working
+        if(role.equals("buyer"))
+            PeerCommunication.checkOrBroadcastMessage(m, "", peerID, "buyer");
+        else
+            PeerCommunication.checkOrBroadcastMessage(m, Seller.sellerItem, peerID, "seller");
     }
 
-    @Override
     public boolean sellItem(String requestedItem) {
         System.out.println("In RemoteImpl sellItem");
         return Seller.sellItem(requestedItem); //Server.java
     }
 
-    @Override
-    public void replyBackwards(Message m) {
+    public void replyBackwards(Message m, String role) {
         System.out.println("In RemoteInterImpl replyBackwards");
-        buyer.processReply(m);
+        if(role.equals("buyer"))
+            Client.buyer.processReply(m);
+        else
+            Seller.processReply(m);
     }
 }
 
-
-//class RemoteInterfaceImpl implements RemoteInterface {
-//
-//
-//    public void floodLookUps(String itemName, int maxHopCount, String lookupId, Stack<Integer> path) {
-//        System.out.printf("Looking up product %s\n", itemName);
-//        Lookup lookup = new Lookup(Server.ID, Seller.productName);
-//        try {
-//            lookup.floodLookUps(itemName, maxHopCount, lookupId, path);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        return ;
-//    }
-//
-//    public boolean sellProduct(String itemName) {
-//        Server.logger.info(String.format("Selling product %s\n", itemName));
-//        return Seller.sellItem(itemName);
-//    }
-//
-//    @Override
-//    public void sendReplyBackToBuyer(Stack<Integer> pathToTraverse, ReplyMessage messageToSend) {
-//        Reply reply = new Reply(pathToTraverse, messageToSend);
-//        reply.sendReplyBackToBuyer();
-//    }
-//}
-
-//public class RemoteInterfaceImpl implements RemoteInterface{
-//
-//    int nodeID;
-//    String productName;
-//
-//    public RemoteInterfaceImpl(int nodeID, String productName) {
-//        this.nodeID = nodeID;
-//        this.productName = productName;
-//    }
-//
-//    @Override
-//    public void checkOrBroadcastMessage(Message m, String productName, int ID) {
-//
-//    }
-//
-//    @Override
-//    public boolean sellItem(String requestedItem) {
-//        return false;
-//    }
-//}
 public class Server {
     public static Logger logger;
     public static Integer ID;
@@ -155,7 +106,6 @@ public class Server {
             pathToCommonFile = args[1];
             pathToConfigFile = args[2];
             productsToSell = args[3].split(",");
-            //Seller.maxProductCount = Integer.parseInt(args[4]);
             if(args.length>=5)
                 productsToRestock = args[4].split(",");
             else
@@ -179,11 +129,13 @@ public class Server {
             prop = new Properties();
             prop.load(input);
             for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-                PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),(String) entry.getValue());
+                String value = (String) entry.getValue();
+                String[] peersAndRoles = value.split(",");
+                PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
+                PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
             }
         }
-        //HashSet<Integer> set = new HashSet();
-        //HashSet<String> items = new HashSet();
+
         HashMap<Integer,String> sellerItems = new HashMap<>();
         try (InputStream input = new FileInputStream(pathToConfigFile)) {
             prop = new Properties();
@@ -195,8 +147,8 @@ public class Server {
                 //set.add(key);
                 String value = (String) entry.getValue();
                 String[] URLandNeighbors = value.split(",");
-                sellerItems.put(key,URLandNeighbors[1]);
-                for (int i = 2; i < URLandNeighbors.length; i++)
+                //sellerItems.put(key,URLandNeighbors[1]);
+                for (int i = 1; i < URLandNeighbors.length; i++)
                     list.add(Integer.parseInt(URLandNeighbors[i]));
                 PeerCommunication.neighborPeerIDs.put(key,list);
 
@@ -206,14 +158,21 @@ public class Server {
             throw ex;
         }
         //System.out.println(sellerItems);
-        for (Map.Entry<Integer,String> entry : sellerItems.entrySet()) {
-            ServerThread serverThread = new ServerThread(entry.getKey(), "Seller",entry.getValue());
-            serverThread.start();
-            System.out.println(PeerCommunication.peerIdURLMap);
+        //Seller.sellerItem = productsToSell[0];
+        Seller.setSellerItem(productsToSell[0]);
+        ServerThread serverThread = new ServerThread(ID);
+        serverThread.start();
+        System.out.println(PeerCommunication.peerIdURLMap);
+        System.out.println("**************");
+        System.out.println(PeerCommunication.neighborPeerIDs);
 
-            System.out.println(PeerCommunication.neighborPeerIDs);
-            System.err.println("ID:"+entry.getValue());
-        }
+//        for (Map.Entry<Integer,String> entry : sellerItems.entrySet()) {
+//
+//            System.out.println(PeerCommunication.peerIdURLMap);
+//
+//            System.out.println(PeerCommunication.neighborPeerIDs);
+//            System.err.println("ID:"+entry.getValue());
+//        }
 
 
     }
