@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Message {
+public class Message implements Serializable {
 
     private String requestedItem;
     private String lookUpId;
@@ -17,9 +18,8 @@ public class Message {
         SellerID = sellerID;
     }
 
-    public void Message() {
-        this.hopCount = 0;
-        path = new ArrayList<Integer>();
+    public void Message(int hopCount) {
+        this.hopCount = hopCount;
     }
 
     public String getRequestedItem() {

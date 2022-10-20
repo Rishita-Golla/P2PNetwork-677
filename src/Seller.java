@@ -1,3 +1,4 @@
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -5,7 +6,8 @@ import java.util.concurrent.Semaphore;
 
 public class Seller extends PeerCommunication{
 
-    static String sellerItem;
+
+    static volatile String sellerItem;
     static int currItemCount;
     int sellerID;
     private static Semaphore semaphore = new Semaphore(1);
@@ -16,7 +18,7 @@ public class Seller extends PeerCommunication{
 
     // Sell item to a buyer after receiving response from buyer
     public static boolean sellItem(String requestedItem) {
-
+        System.out.println("Selling item "+requestedItem);
         if(!requestedItem.equals(sellerItem))
             return false;
 
@@ -43,7 +45,7 @@ public class Seller extends PeerCommunication{
         currItemCount = Constants.MAX_ITEM_COUNT;
     }
 
-    public void processMessageForward(Message m) {
+    public void processMessageForward(Message m) throws MalformedURLException {
         checkOrBroadcastMessage(m, sellerItem, sellerID);
     }
 

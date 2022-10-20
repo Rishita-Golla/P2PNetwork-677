@@ -59,7 +59,7 @@ public class Client {
             ex.printStackTrace();
             throw ex;
         }
-        ServerThread serverThread = new ServerThread(id, "Client");
+        ServerThread serverThread = new ServerThread(id, "Client","");
         serverThread.start();
         while(true){
             try {
