@@ -25,7 +25,7 @@ class ServerThread implements Runnable {
 
     @Override
     public void run() {
-        System.out.printf(formatter.format(date)+" Node %d running as a Lookup server on url %s..\n", this.ID, url);
+        System.out.printf(formatter.format(date)+" Node %d is up and running on url %s..\n", this.ID, url);
         int port;
         try {
             port = new URL(this.url).getPort();
@@ -36,7 +36,7 @@ class ServerThread implements Runnable {
         try {
             RemoteInterfaceImpl obj = new RemoteInterfaceImpl();
             RemoteInterface stub = (RemoteInterface) UnicastRemoteObject.exportObject(obj, 0);
-            System.setProperty("java.rmi.server.hostname", new URL(this.url).getHost());
+            System.setProperty("java.rmi.server.hostname", "192.168.56.1");
             Registry registry = LocateRegistry.createRegistry(port);
             registry.bind("RemoteInterface", stub);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class Server {
                 productsToRestock = productsToSell;
 
         }catch (Exception e){ //change
-            System.err.println("Incorrect arguments. Usage java -c destination Server {id} {pathToConfig} {products to sell separated by ,} {maxCount} {[optional] products to restock separated by ,}");
+            System.err.println("Incorrect arguments. Usage: java Server common.txt seller.txt <item name>");
             throw e;
         }
 
@@ -142,10 +142,10 @@ public class Server {
                 int key = Integer.parseInt((String) entry.getKey());
                 //set.add(key);
                 String value = (String) entry.getValue();
-                String[] URLandNeighbors = value.split(",");
-                //sellerItems.put(key,URLandNeighbors[1]);
+                String cleanValue = value.replaceAll("\\[", "").replaceAll("\\]","");
+                String[] URLandNeighbors = cleanValue.split(",");
                 for (int i = 1; i < URLandNeighbors.length; i++)
-                    list.add(Integer.parseInt(URLandNeighbors[i]));
+                    list.add(Integer.parseInt(URLandNeighbors[i].trim()));
                 PeerCommunication.neighborPeerIDs.put(key,list);
 
             }
@@ -153,25 +153,10 @@ public class Server {
             ex.printStackTrace();
             throw ex;
         }
-        //System.out.println(sellerItems);
-        //Seller.sellerItem = productsToSell[0];
         Seller.setSellerItem(productsToSell[0]);
         ServerThread serverThread = new ServerThread(ID);
         serverThread.start();
-//        System.out.println(formatter.format(date)+" PeerURLMap "+PeerCommunication.peerIdURLMap);
-//        System.out.println("**************");
-//        System.out.println(formatter.format(date)+ " PeerNeighborsMap "+PeerCommunication.neighborPeerIDs);
-        System.out.println(formatter.format(date)+" I am node:+"+ID+"selling item:"+Seller.sellerItem);
-
-
-//        for (Map.Entry<Integer,String> entry : sellerItems.entrySet()) {
-//
-//            System.out.println(PeerCommunication.peerIdURLMap);
-//
-//            System.out.println(PeerCommunication.neighborPeerIDs);
-//            System.err.println("ID:"+entry.getValue());
-//        }
-
+        System.out.println(formatter.format(date)+" I am node: "+ID+" selling item: "+Seller.sellerItem);
 
     }
 }

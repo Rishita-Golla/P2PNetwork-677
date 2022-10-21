@@ -42,9 +42,10 @@ public class Client {
                 ArrayList<Integer> list = new ArrayList();
                 Integer key = Integer.parseInt((String) entry.getKey());
                 String value = (String) entry.getValue();
-                String[] URLandNeighbors = value.split(",");
+                String cleanValue = value.replaceAll("\\[", "").replaceAll("\\]","");
+                String[] URLandNeighbors = cleanValue.split(",");
                 for (int i = 1; i < URLandNeighbors.length; i++)
-                    list.add(Integer.parseInt(URLandNeighbors[i]));
+                    list.add(Integer.parseInt(URLandNeighbors[i].trim()));
                 PeerCommunication.neighborPeerIDs.put(key,list);
 
             }
