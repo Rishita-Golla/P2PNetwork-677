@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Message implements Serializable {
 
-    private String requestedItem;
+    private String requestedItem; // buyer requested item
     private String lookUpId;
     private int hopCount;
     private List<Integer> path;

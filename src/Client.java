@@ -23,6 +23,8 @@ public class Client {
 
         buyer = new Buyer(id, products[0]);
         Properties prop;
+
+        // creating HashMap for peerIdURL, roles, and neighbours
         try (InputStream input = new FileInputStream(pathToCommonFile)) {
             prop = new Properties();
             prop.load(input);
@@ -64,8 +66,7 @@ public class Client {
                 Thread.currentThread().interrupt();
             }
 
-            // Passing productName as empty string because a buyer doesn't sell any product.
-            // Lookup is used by the server nodes too where they pass the product name they sell to this.
+           // starting buyer lookup
             try{
                buyer.startLookUp();
             } catch (Exception e){

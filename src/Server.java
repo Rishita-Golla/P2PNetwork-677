@@ -70,8 +70,9 @@ class RemoteInterfaceImpl implements RemoteInterface{
         this.productName = productName;
     }
 
+    // based on the role of buyer/seller message is further broadcasted
     public void checkOrBroadcastMessage(Message m, int peerID, String role) throws MalformedURLException {
-        System.out.println(formatter.format(date)+" Reached new node for communication "+ peerID + " item"+ Seller.sellerItem);
+        System.out.println(formatter.format(date)+" Reached new node for communication "+ peerID + " item owned: "+ Seller.sellerItem);
         if(role.equals("buyer"))
             PeerCommunication.checkOrBroadcastMessage(m, "", peerID, "buyer");
         else
@@ -79,10 +80,10 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     public boolean sellItem(String requestedItem) {
-       // System.out.println("In RemoteImpl sellItem");
-        return Seller.sellItem(requestedItem); //Server.java
+        return Seller.sellItem(requestedItem);
     }
 
+    // process reply backward for buyer and seller
     public void replyBackwards(Message m, String role) {
       //  System.out.println("In RemoteInterImpl replyBackwards");
         if(role.equals("buyer"))
@@ -102,8 +103,6 @@ public class Server {
         String[] productsToRestock;
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date date = new Date(System.currentTimeMillis());
-
-       // System.out.println(formatter.format(date));
 
         try {
             ID = Integer.parseInt(args[0]);
@@ -132,7 +131,7 @@ public class Server {
             }
         }
 
-        HashMap<Integer,String> sellerItems = new HashMap<>();
+       // HashMap<Integer,String> sellerItems = new HashMap<>();
         try (InputStream input = new FileInputStream(pathToConfigFile)) {
             prop = new Properties();
             // load a properties file
@@ -153,25 +152,9 @@ public class Server {
             ex.printStackTrace();
             throw ex;
         }
-        //System.out.println(sellerItems);
-        //Seller.sellerItem = productsToSell[0];
         Seller.setSellerItem(productsToSell[0]);
         ServerThread serverThread = new ServerThread(ID);
         serverThread.start();
-//        System.out.println(formatter.format(date)+" PeerURLMap "+PeerCommunication.peerIdURLMap);
-//        System.out.println("**************");
-//        System.out.println(formatter.format(date)+ " PeerNeighborsMap "+PeerCommunication.neighborPeerIDs);
-        System.out.println(formatter.format(date)+" I am node:+"+ID+"selling item:"+Seller.sellerItem);
-
-
-//        for (Map.Entry<Integer,String> entry : sellerItems.entrySet()) {
-//
-//            System.out.println(PeerCommunication.peerIdURLMap);
-//
-//            System.out.println(PeerCommunication.neighborPeerIDs);
-//            System.err.println("ID:"+entry.getValue());
-//        }
-
-
+        System.out.println(formatter.format(date)+" I am node: "+ID+"selling item:"+Seller.sellerItem);
     }
 }

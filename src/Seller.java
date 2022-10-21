@@ -55,7 +55,7 @@ public class Seller extends PeerCommunication{
 //        while(sellerItem.equals(possibleNextItem)) {
 //            possibleNextItem = Constants.POSSIBLE_ITEMS.get(rand.nextInt(size));
 //        }
-        System.out.println(formatter.format(date)+"Restocked items for seller ID:"+sellerID+"with item:"+sellerItem);
+        System.out.println(formatter.format(date)+"Restocked items. Now selling item:"+sellerItem);
         currItemCount = Constants.MAX_ITEM_COUNT;
     }
 

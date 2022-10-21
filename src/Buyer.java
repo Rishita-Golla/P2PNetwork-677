@@ -25,6 +25,7 @@ public class Buyer extends PeerCommunication{
         super(peerIdURLMap, neighborPeerIDs);
     }
 
+    // buyer starts a transaction with seller and attempts to buy requested item
     public boolean buyItemDirectlyFromSeller(int sellerId) {
         System.out.println(formatter.format(date)+" Trying to buy item directly from Seller ID: " + sellerId);
         try {
@@ -39,17 +40,19 @@ public class Buyer extends PeerCommunication{
         return false;
     }
 
+    // pick a new item in cyclic order
     public void pickNewBuyerItem() {
         int size = Constants.POSSIBLE_ITEMS.size();
         int index = Constants.POSSIBLE_ITEMS.indexOf(buyerItem);
         buyerItem = Constants.POSSIBLE_ITEMS.get((index+1)%size);
-        System.out.println(formatter.format(date)+"Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
+        System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
     }
 
     public void processMessageForward(Message m) throws MalformedURLException {
         checkOrBroadcastMessage(m, "", buyerID, "buyer");
     }
 
+    // process reply at buyers end. If message reaches initial buyer then
     public void processReply(Message m) {
         try {
             semaphore.acquire();
@@ -59,7 +62,6 @@ public class Buyer extends PeerCommunication{
             if (m.getPath().isEmpty()) { // reached initial buyer node
                 System.out.println(formatter.format(date)+" Reached initial buyer in reply backward path");
                 if (buyItemDirectlyFromSeller(m.getSellerID())) {
-                    //add to processed LookUps
                     System.out.println(formatter.format(date)+" Bought item " + m.getRequestedItem() + " from Seller " + "with ID " + m.getSellerID());
                     timedOutReplies.add(m.getLookUpId());
                     System.out.println(formatter.format(date)+" Added " + m.getLookUpId() + " to already processed lookUp Ids");
@@ -74,6 +76,7 @@ public class Buyer extends PeerCommunication{
         semaphore.release();
     }
 
+    // Starting lookUp with new lookUpId and message
     public void startLookUp() throws Exception {
         String lookupId = UUID.randomUUID().toString();
         Message m = new Message();
@@ -83,6 +86,7 @@ public class Buyer extends PeerCommunication{
 
         System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
 
+        // As this is a common method, buyer will be passing empty string as he doesn't own any item
         checkOrBroadcastMessage(m, "", buyerID, "buyer");
 
         for(int i = 0; i < 5; i++) {
@@ -99,7 +103,7 @@ public class Buyer extends PeerCommunication{
     public void discardReply(String lookupId) {
         try {
             semaphore.acquire();
-            System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + "and lookUp"+ lookupId);
+            System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + " and lookUp "+ lookupId);
             timedOutReplies.add(lookupId);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
