@@ -21,15 +21,8 @@ public class PeerCommunication {
     }
 
     public PeerCommunication(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
-        this.peerIdURLMap = peerIdURLMap;
-        this.neighborPeerIDs = neighborPeerIDs;
-    }
-
-   // public void processMessageForward(Message m) throws MalformedURLException {};
-    //public void processReply(Message m) throws InterruptedException {};
-
-    public void startCommunication() {
-
+        PeerCommunication.peerIdURLMap = peerIdURLMap;
+        PeerCommunication.neighborPeerIDs = neighborPeerIDs;
     }
 
     // A seller checks if he has the item, else broadcasts

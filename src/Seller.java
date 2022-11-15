@@ -22,7 +22,7 @@ public class Seller extends PeerCommunication{
         sellerItem = itemName;
     }
     // Sell item to a buyer after receiving response from buyer
-    public static boolean sellItem(String requestedItem) {
+    public static boolean sellItem(String requestedItem, String role) {
         System.out.println(formatter.format(date)+" Selling item "+requestedItem);
         if(!requestedItem.equals(sellerItem)) {
             System.out.println(formatter.format(date)+" Items don't match in sellItem, returning ");
@@ -48,20 +48,11 @@ public class Seller extends PeerCommunication{
     }
 
     public static void stockItems() {
-
         int index = Constants.POSSIBLE_ITEMS.indexOf(sellerItem);
         sellerItem = Constants.POSSIBLE_ITEMS.get((index+1)%3);
-//        String possibleNextItem = sellerItem;
-//        while(sellerItem.equals(possibleNextItem)) {
-//            possibleNextItem = Constants.POSSIBLE_ITEMS.get(rand.nextInt(size));
-//        }
         System.out.println(formatter.format(date)+"Restocked items. Now selling item:"+sellerItem);
         currItemCount = Constants.MAX_ITEM_COUNT;
     }
-
-//    public void processMessageForward(Message m) throws MalformedURLException {
-//        checkOrBroadcastMessage(m, sellerItem, sellerID, "seller");
-//    }
 
     public static void processReply(Message m) {
         replyBackwards(m);

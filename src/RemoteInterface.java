@@ -4,6 +4,6 @@ import java.rmi.RemoteException;
 
 public interface RemoteInterface extends Remote {
     public void checkOrBroadcastMessage(Message m, int peerID, String role) throws RemoteException, MalformedURLException;
-    public boolean sellItem(String requestedItem) throws RemoteException;
+    public boolean sellItem(String requestedItem, String role) throws RemoteException;
     public void replyBackwards(Message m, String role) throws RemoteException;
 }

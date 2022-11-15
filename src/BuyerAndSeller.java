@@ -1,4 +1,3 @@
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -6,33 +5,38 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
-public class Buyer extends PeerCommunication{
-
+public class BuyerAndSeller extends PeerCommunication {
     public String buyerItem;
-    protected int buyerID;
+    public static String sellerItem;
+    public static int currItemCount = Constants.MAX_ITEM_COUNT;
+    protected int peerID;
     private static Semaphore semaphore = new Semaphore(1);
     List<String> timedOutReplies = new ArrayList<>();
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     Date date = new Date(System.currentTimeMillis());
 
-    public Buyer(int buyerID, String buyerItem) {
+    public BuyerAndSeller(int peerID, String buyerItem, String sellerItem) {
         super();
-        this.buyerID = buyerID;
+        this.peerID = peerID;
         this.buyerItem = buyerItem;
+        BuyerAndSeller.sellerItem = sellerItem;
     }
 
-    public Buyer(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
+    public BuyerAndSeller(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
         super(peerIdURLMap, neighborPeerIDs);
     }
 
-    // buyer starts a transaction with seller and attempts to buy requested item
+//    public static void setSellerItem(String itemName) {
+//        sellerItem = itemName;
+//    }
+
     public boolean buyItemDirectlyFromSeller(int sellerId) {
         System.out.println(formatter.format(date)+" Trying to buy item directly from Seller ID: " + sellerId);
         try {
             URL url = new URL(peerIdURLMap.get(sellerId));
             Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
             RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
-            return remoteInterface.sellItem(this.buyerItem, "buyer");
+            return remoteInterface.sellItem(this.buyerItem, "buyerAndSeller");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,19 +44,46 @@ public class Buyer extends PeerCommunication{
         return false;
     }
 
+    public static boolean sellItem(String requestedItem, String role) {
+      //  System.out.println(formatter.format(date)+" Selling item "+requestedItem);
+        if(!requestedItem.equals(sellerItem)) {
+      //      System.out.println(formatter.format(date)+" Items don't match in sellItem, returning ");
+            return false;
+        }
+
+        // synchronization
+        boolean successfulSell = false;
+        try {
+            semaphore.acquire();
+            if (currItemCount >= 1) {
+                currItemCount--;
+                successfulSell = true;
+            }
+        //    System.out.println(formatter.format(date)+"Sold requested item - " + requestedItem + "!!");
+            if (currItemCount == 0)
+                stockItems();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        semaphore.release();
+        return successfulSell;
+    }
+
     // pick a new item in cyclic order
     public void pickNewBuyerItem() {
         int size = Constants.POSSIBLE_ITEMS.size();
         int index = Constants.POSSIBLE_ITEMS.indexOf(buyerItem);
         buyerItem = Constants.POSSIBLE_ITEMS.get((index+1)%size);
-        System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
+        System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+peerID);
     }
 
-    public void processMessageForward(Message m) throws MalformedURLException {
-        checkOrBroadcastMessage(m, "", buyerID, "buyer");
+    public static void stockItems() {
+        int index = Constants.POSSIBLE_ITEMS.indexOf(sellerItem);
+        sellerItem = Constants.POSSIBLE_ITEMS.get((index+1)%3);
+    //    System.out.println(formatter.format(date)+"Restocked items. Now selling item:"+sellerItem);
+        currItemCount = Constants.MAX_ITEM_COUNT;
     }
 
-    // process reply at buyers end. If message reaches initial buyer then
     public void processReply(Message m) {
         try {
             semaphore.acquire();
@@ -87,7 +118,7 @@ public class Buyer extends PeerCommunication{
         System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
 
         // As this is a common method, buyer will be passing empty string as he doesn't own any item
-        checkOrBroadcastMessage(m, "", buyerID, "buyer");
+        checkOrBroadcastMessage(m, "", peerID, "buyer");
 
         for(int i = 0; i < 5; i++) {
             Thread.sleep(Constants.MAX_TIMEOUT/5);
@@ -103,13 +134,11 @@ public class Buyer extends PeerCommunication{
     public void discardReply(String lookupId) {
         try {
             semaphore.acquire();
-            System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + " and lookUp "+ lookupId);
+            System.out.println(formatter.format(date)+ " Timed out request for "+ peerID + " and lookUp "+ lookupId);
             timedOutReplies.add(lookupId);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         semaphore.release();
     }
-
 }

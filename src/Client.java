@@ -9,21 +9,29 @@ import java.util.logging.Logger;
 public class Client {
     public static Logger logger;
     public static Buyer buyer;
+    public static BuyerAndSeller buyerAndSeller;
 
     private Client() {}
 
     public static void main (String[] args) throws Exception {
+        boolean onlyBuyer = true;
         int id = Integer.parseInt(args[0]);
         String configFilePath = args[2];
         String pathToCommonFile = args[1];
         String[] products = args[3].split(",");
 
+        if(args.length > 4)
+            onlyBuyer = false;
+
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date date = new Date(System.currentTimeMillis());
 
-        buyer = new Buyer(id, products[0]);
-        Properties prop;
+        if(onlyBuyer)
+            buyer = new Buyer(id, products[0]);
+        else
+            buyerAndSeller = new BuyerAndSeller(id, products[0], args[4]);
 
+        Properties prop;
         // creating HashMap for peerIdURL, roles, and neighbours
         try (InputStream input = new FileInputStream(pathToCommonFile)) {
             prop = new Properties();
@@ -32,7 +40,7 @@ public class Client {
                 String value = (String) entry.getValue();
                 String[] peersAndRoles = value.split(",");
                 PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
-                PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
+                PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]); // Add buyerAndSeller as another role
             }
         }
 
@@ -41,7 +49,7 @@ public class Client {
             // load a properties file
             prop.load(input);
             for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-                ArrayList<Integer> list = new ArrayList();
+                List<Integer> list = new ArrayList<>();
                 Integer key = Integer.parseInt((String) entry.getKey());
                 String value = (String) entry.getValue();
                 String[] URLandNeighbors = value.split(",");
@@ -56,22 +64,29 @@ public class Client {
         }
         ServerThread serverThread = new ServerThread(id);
         serverThread.start();
-        while(true){
+        while(true) {
             try {
-                System.out.println(formatter.format(date)+" Thread sleep - 2 seconds");
+                System.out.println(formatter.format(date) + " Thread sleep - 2 seconds");
                 Thread.sleep(2000);
-            }
-            catch(InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
 
-           // starting buyer lookup
-            try{
-               buyer.startLookUp();
-            } catch (Exception e){
-                e.printStackTrace();
-                throw e;
+            // starting buyer lookup
+            if (onlyBuyer) {
+                try {
+                    buyer.startLookUp();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else {
+                try{
+                    buyerAndSeller.startLookUp();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
             }
         }
     }

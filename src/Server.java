@@ -61,9 +61,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     Date date = new Date(System.currentTimeMillis());
 
-    public RemoteInterfaceImpl(){
-
-    }
+    public RemoteInterfaceImpl() {}
 
     public RemoteInterfaceImpl(int nodeID, String productName) {
         this.nodeID = nodeID;
@@ -75,21 +73,26 @@ class RemoteInterfaceImpl implements RemoteInterface{
         System.out.println(formatter.format(date)+" Reached new node for communication "+ peerID + " item owned: "+ Seller.sellerItem);
         if(role.equals("buyer"))
             PeerCommunication.checkOrBroadcastMessage(m, "", peerID, "buyer");
-        else
+        else if(role.equals("seller"))
             PeerCommunication.checkOrBroadcastMessage(m, Seller.sellerItem, peerID, "seller");
+        else
+            PeerCommunication.checkOrBroadcastMessage(m, BuyerAndSeller.sellerItem, peerID, "buyerAndSeller");
     }
 
-    public boolean sellItem(String requestedItem) {
-        return Seller.sellItem(requestedItem);
+    public boolean sellItem(String requestedItem, String role) {
+        if(role.equals("seller"))
+            return Seller.sellItem(requestedItem, "seller");
+        return BuyerAndSeller.sellItem(requestedItem, "buyerAndSeller");
     }
 
     // process reply backward for buyer and seller
     public void replyBackwards(Message m, String role) {
-      //  System.out.println("In RemoteInterImpl replyBackwards");
         if(role.equals("buyer"))
             Client.buyer.processReply(m);
-        else
+        else if(role.equals("seller"))
             Seller.processReply(m);
+        else
+            Client.buyerAndSeller.processReply(m);
     }
 }
 
