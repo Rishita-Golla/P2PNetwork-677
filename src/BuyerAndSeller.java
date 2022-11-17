@@ -14,12 +14,14 @@ public class BuyerAndSeller extends PeerCommunication {
     List<String> timedOutReplies = new ArrayList<>();
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     Date date = new Date(System.currentTimeMillis());
+    LamportClock lamportClock = null;
 
     public BuyerAndSeller(int peerID, String buyerItem, String sellerItem) {
         super();
         this.peerID = peerID;
         this.buyerItem = buyerItem;
         BuyerAndSeller.sellerItem = sellerItem;
+        lamportClock = new LamportClock();
     }
 
     public BuyerAndSeller(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
@@ -140,5 +142,9 @@ public class BuyerAndSeller extends PeerCommunication {
             e.printStackTrace();
         }
         semaphore.release();
+    }
+
+    public void receiveUpdate(int timestamp) {
+        lamportClock.receiveUpdate(timestamp);
     }
 }

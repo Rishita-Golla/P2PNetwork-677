@@ -1,0 +1,167 @@
+"C:\Program Files\Java\jdk-17.0.4.1\bin\java.exe" "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2022.2.3\lib\idea_rt.jar=54634:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2022.2.3\bin" -Dfile.encoding=UTF-8 -classpath "D:\Juie Darwade\University of Massachusetts Amherst\677\P2PNetwork-677\out\production\P2P_Network" Server 1 src/common.properties src/seller.properties fish
+2022-10-20 at 18:05:44 GMT-04:00 Node 1 running as a Lookup server on url http://127.0.0.1:5000..
+2022-10-20 at 18:05:44 GMT-04:00 I am node: 1 selling item:fish
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemfish
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item fish .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item fish
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - fish!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:salt
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemsalt
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item salt .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item salt
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - salt!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:boar
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemboar
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item boar .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item boar
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - boar!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:fish
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemfish
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item fish .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item fish
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - fish!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:salt
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemsalt
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item salt .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item salt
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - salt!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:boar
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemboar
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item boar .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item boar
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - boar!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:fish
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemfish
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item fish .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item fish
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - fish!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:salt
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemsalt
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item salt .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item salt
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - salt!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:boar
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemboar
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item boar .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item boar
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - boar!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:fish
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemfish
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item fish .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item fish
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - fish!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:salt
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemsalt
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item salt .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item salt
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - salt!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:boar
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemboar
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item boar .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item boar
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - boar!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:fish
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemfish
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item fish .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item fish
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - fish!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:salt
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemsalt
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item salt .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item salt
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - salt!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:boar
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemboar
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item boar .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item boar
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - boar!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:fish
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemfish
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item fish .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item fish
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - fish!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:salt
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemsalt
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item salt .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item salt
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - salt!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:boar
+2022-10-20 at 18:05:44 GMT-04:00 Reached new node for communication 1 itemboar
+2022-10-20 at 18:05:44 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:44 GMT-04:00{1=[2]}
+2022-10-20 at 18:05:44 GMT-04:00 Message props: 1[2]
+2022-10-20 at 18:05:44 GMT-04:00 Seller 1 has item boar .Starting backward reply 
+2022-10-20 at 18:05:44 GMT-04:00 Replying backwards to ID: 2
+2022-10-20 at 18:05:44 GMT-04:00 Selling item boar
+2022-10-20 at 18:05:44 GMT-04:00Sold requested item - boar!!
+2022-10-20 at 18:05:44 GMT-04:00Restocking items. Now selling item:fish
+
+Process finished with exit code 130

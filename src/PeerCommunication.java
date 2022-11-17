@@ -15,6 +15,8 @@ public class PeerCommunication {
     public static List<String> processedLookUps = new ArrayList<>();
     static SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     static Date date = new Date(System.currentTimeMillis());
+    public static int leaderID = 0;
+    public static Leader leader = null;
 
     public PeerCommunication() {
 
@@ -89,6 +91,63 @@ public class PeerCommunication {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
+    public static void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws MalformedURLException {
+
+        int maxNodeID = 0; //next node ID to send call to
+
+        //if msg already contains this node we should stop
+        if (message.peerIDs.contains(nodeID)) {
+            System.out.println("I am at the initial node. Election should stop.");
+            int leaderID = Collections.max(message.peerIDs);
+            leader = new Leader();
+            System.out.println("Elected node is "+leaderID);
+            for(int peerID: message.getPath())
+            {
+                if(rolesMap.get(peerID).equals("seller")){
+                    //sellerInfo.put(peerID,)
+                }
+            }
+            return;
+        }else{
+            if(nodeID == leaderID) {
+                List<Integer> neighbours =  neighborPeerIDs.get(nodeID);
+                for(int node: neighbours) {
+                    if(!message.getPath().contains(node)) {
+                        maxNodeID = node;
+                    }
+                }
+            }else{
+                message.peerIDs.add(nodeID);
+                System.out.println("At node ID: "+nodeID +" sending election request forward.");
+                if(nodeID == peerIdURLMap.size()){
+                    maxNodeID = 1;
+                }else if(nodeID == 1){
+                    maxNodeID = Collections.min(neighborPeerIDs.get(nodeID));
+                }else{
+                    maxNodeID = Collections.max(neighborPeerIDs.get(nodeID));
+                }
+            }
+            URL url = new URL(peerIdURLMap.get(maxNodeID));
+            try {
+                Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+                RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+                remoteInterface.sendLeaderElectionMsg(message, maxNodeID);
+            }
+            catch (RemoteException | NotBoundException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+    }
+
+    public static String sendLeaderStatus() {
+        if(leader.processedRequests <= 10){
+            return "OK";
+        }else
+            return "DOWN";
+    }
+
 }

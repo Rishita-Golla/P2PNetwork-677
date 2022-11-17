@@ -40,7 +40,9 @@ public class Client {
                 String value = (String) entry.getValue();
                 String[] peersAndRoles = value.split(",");
                 PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
-                PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]); // Add buyerAndSeller as another role
+                PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
+                // Add buyerAndSeller as another role
+                // have all peers in list with url:host
             }
         }
 
@@ -64,6 +66,17 @@ public class Client {
         }
         ServerThread serverThread = new ServerThread(id);
         serverThread.start();
+
+        boolean startBazaar = false;
+        boolean leaderElection = true;
+
+        if(leaderElection) {
+            Thread.sleep(3000);
+            ElectionMessage message = new ElectionMessage();
+            PeerCommunication.sendLeaderElectionMsg(message, id);
+            leaderElection = false;
+        }
+
         while(true) {
             try {
                 System.out.println(formatter.format(date) + " Thread sleep - 2 seconds");
@@ -75,7 +88,7 @@ public class Client {
             // starting buyer lookup
             if (onlyBuyer) {
                 try {
-                    buyer.startLookUp();
+                    buyer.startLookUpWithTrader();
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw e;

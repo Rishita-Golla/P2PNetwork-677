@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -69,6 +71,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     // based on the role of buyer/seller message is further broadcasted
+    @Override
     public void checkOrBroadcastMessage(Message m, int peerID, String role) throws MalformedURLException {
         System.out.println(formatter.format(date)+" Reached new node for communication "+ peerID + " item owned: "+ Seller.sellerItem);
         if(role.equals("buyer"))
@@ -79,6 +82,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
             PeerCommunication.checkOrBroadcastMessage(m, BuyerAndSeller.sellerItem, peerID, "buyerAndSeller");
     }
 
+    @Override
     public boolean sellItem(String requestedItem, String role) {
         if(role.equals("seller"))
             return Seller.sellItem(requestedItem, "seller");
@@ -86,6 +90,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     // process reply backward for buyer and seller
+    @Override
     public void replyBackwards(Message m, String role) {
         if(role.equals("buyer"))
             Client.buyer.processReply(m);
@@ -93,6 +98,26 @@ class RemoteInterfaceImpl implements RemoteInterface{
             Seller.processReply(m);
         else
             Client.buyerAndSeller.processReply(m);
+    }
+
+    @Override
+    public void sendTimeStampUpdate(int timestamp, String role) {
+        if(role.equals("buyer"))
+            Client.buyer.receiveUpdate(timestamp);
+        else if(role.equals("seller"))
+            Seller.receiveUpdate(timestamp);
+        else
+            Client.buyerAndSeller.receiveUpdate(timestamp);
+    }
+
+    @Override
+    public String sendLeaderStatus() {
+        return PeerCommunication.sendLeaderStatus();
+    }
+
+    @Override
+    public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, NotBoundException {
+        PeerCommunication.sendLeaderElectionMsg(message, nodeID);
     }
 }
 
@@ -148,7 +173,7 @@ public class Server {
                 //sellerItems.put(key,URLandNeighbors[1]);
                 for (int i = 1; i < URLandNeighbors.length; i++)
                     list.add(Integer.parseInt(URLandNeighbors[i]));
-                PeerCommunication.neighborPeerIDs.put(key,list);
+                PeerCommunication.neighborPeerIDs.put(key,list); // update neighbor peerID map
 
             }
         } catch (IOException ex) {

@@ -1,9 +1,12 @@
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
 public class Buyer extends PeerCommunication{
@@ -14,15 +17,20 @@ public class Buyer extends PeerCommunication{
     List<String> timedOutReplies = new ArrayList<>();
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     Date date = new Date(System.currentTimeMillis());
+    LamportClock lamportClock = null;
 
     public Buyer(int buyerID, String buyerItem) {
         super();
         this.buyerID = buyerID;
         this.buyerItem = buyerItem;
+        lamportClock = new LamportClock();
     }
 
     public Buyer(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
         super(peerIdURLMap, neighborPeerIDs);
+    }
+
+    public static void processBuy() {
     }
 
     // buyer starts a transaction with seller and attempts to buy requested item
@@ -100,16 +108,79 @@ public class Buyer extends PeerCommunication{
         }
     }
 
+    public void startLookUpWithTrader() throws Exception {
+        Message m = new Message();
+        String lookupId = UUID.randomUUID().toString();
+        m.setLookUpId(lookupId);
+        m.setRequestedItem(buyerItem);
+        m.setTimestamp(lamportClock.getTimestamp());
+        m.setBuyerID(buyerID);
+
+        //set requested item count for buyer
+
+        System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
+
+        if(checkStatusOfLeader().equals("OK")) {
+            sendTimeStampUpdate(buyerID);
+            sendBuyMessageToTrader(m);
+        }else if (checkStatusOfLeader().equals("DOWN")) {
+            //if the request has timed out beyond MAX Value start re-election
+            ElectionMessage message = new ElectionMessage();
+            PeerCommunication.sendLeaderElectionMsg(message, buyerID);
+        }
+
+        for(int i = 0; i < 5; i++) {
+            Thread.sleep(Constants.MAX_TIMEOUT/5);
+            if(timedOutReplies.contains(lookupId))
+                break;
+        }
+
+        if(!timedOutReplies.contains(lookupId)) {
+            discardReply(lookupId);
+        }
+    }
+
+    private void sendBuyMessageToTrader(Message m) {
+        // add message to trader's queue directly
+    }
+
     public void discardReply(String lookupId) {
         try {
             semaphore.acquire();
             System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + " and lookUp "+ lookupId);
             timedOutReplies.add(lookupId);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         semaphore.release();
     }
 
+    public void receiveUpdate(int timestamp) {
+        lamportClock.receiveUpdate(timestamp);
+    }
+
+    // update peer's timestamps based on the buyer's timestamp before message is sent to the trader
+    // make this function non-blocking
+    public void sendTimeStampUpdate(int buyerID) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                lamportClock.sendTimestampUpdate(buyerID);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public String checkStatusOfLeader() throws MalformedURLException {
+        URL url = new URL(String.valueOf(PeerCommunication.leaderID));
+        try {
+            Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+            RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+            return remoteInterface.sendLeaderStatus();
+        }
+        catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

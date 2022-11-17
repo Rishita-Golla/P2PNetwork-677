@@ -13,9 +13,13 @@ public class Seller extends PeerCommunication{
     private static Semaphore semaphore = new Semaphore(1);
     static SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     static Date date = new Date(System.currentTimeMillis());
+    static LamportClock lamportClock = null;
+    private int income;
 
     public Seller(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
         super(peerIdURLMap, neighborPeerIDs);
+        this.income = 0;
+        lamportClock = new LamportClock();
     }
 
     public static void setSellerItem(String itemName) {
@@ -56,5 +60,14 @@ public class Seller extends PeerCommunication{
 
     public static void processReply(Message m) {
         replyBackwards(m);
+    }
+
+    public static void receiveUpdate(int timestamp) {
+        lamportClock.receiveUpdate(timestamp);
+    }
+
+    // set purchase price for each item -> while sending from trader subtract 10% commission and send income to seller
+    public void processPaymentFromTrader(int income) {
+        this.income += income;
     }
 }

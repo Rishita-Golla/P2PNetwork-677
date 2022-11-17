@@ -8,14 +8,24 @@ public class Message implements Serializable {
     private String lookUpId;
     private int hopCount;
     private List<Integer> path;
-    private int SellerID; //set seller ID - during transaction
+    private int sellerID; //set seller ID - during transaction
+    private int buyerID;
+    private int timestamp;
+
+    public int getBuyerID() { return buyerID; }
+
+    public void setBuyerID(int buyerID) { this.buyerID = buyerID; }
+
+    public int getTimestamp() { return timestamp; }
+
+    public void setTimestamp(int timestamp) { this.timestamp = timestamp; }
 
     public int getSellerID() {
-        return SellerID;
+        return sellerID;
     }
 
     public void setSellerID(int sellerID) {
-        SellerID = sellerID;
+        this.sellerID = sellerID;
     }
 
     public void Message(int hopCount) {

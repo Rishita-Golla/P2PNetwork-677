@@ -1,0 +1,184 @@
+"C:\Program Files\Java\jdk-17.0.4.1\bin\java.exe" "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2022.2.3\lib\idea_rt.jar=54638:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2022.2.3\bin" -Dfile.encoding=UTF-8 -classpath "D:\Juie Darwade\University of Massachusetts Amherst\677\P2PNetwork-677\out\production\P2P_Network" Client 2 src/common.properties src/buyer.properties fish
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Node 2 running as a Lookup server on url http://127.0.0.1:5001..
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 7fa4241f-4a11-4c39-a1cf-7ca17aebcdb4, requested item: fish
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item fish from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 7fa4241f-4a11-4c39-a1cf-7ca17aebcdb4 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up salt as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 6fd70e2d-4c22-4762-8607-8b197c2dd41d, requested item: salt
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item salt from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 6fd70e2d-4c22-4762-8607-8b197c2dd41d to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up boar as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 421ed997-2c14-4fb7-b895-bfb21fe3b562, requested item: boar
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item boar from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 421ed997-2c14-4fb7-b895-bfb21fe3b562 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up fish as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 480ed87b-b470-40e9-b637-209b09aa8176, requested item: fish
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item fish from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 480ed87b-b470-40e9-b637-209b09aa8176 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up salt as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 88cfa7b3-03aa-44dd-ab65-57ab4ecc134d, requested item: salt
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item salt from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 88cfa7b3-03aa-44dd-ab65-57ab4ecc134d to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up boar as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: bf592a58-452d-45d2-b949-b4dfb3d36c50, requested item: boar
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item boar from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added bf592a58-452d-45d2-b949-b4dfb3d36c50 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up fish as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: dc198ac5-d085-48d0-a325-d93c54ecae3c, requested item: fish
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item fish from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added dc198ac5-d085-48d0-a325-d93c54ecae3c to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up salt as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 57af674a-ca66-44fa-842e-496f77c8270b, requested item: salt
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item salt from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 57af674a-ca66-44fa-842e-496f77c8270b to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up boar as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: b69464c0-1a06-4dfe-bc80-bc375aa414b2, requested item: boar
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item boar from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added b69464c0-1a06-4dfe-bc80-bc375aa414b2 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up fish as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: ad7b5cac-84a9-497b-9927-c8e4417fd6de, requested item: fish
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item fish from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added ad7b5cac-84a9-497b-9927-c8e4417fd6de to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up salt as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: d0a02080-dc63-446c-bf71-935c6c2c397e, requested item: salt
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item salt from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added d0a02080-dc63-446c-bf71-935c6c2c397e to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up boar as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: f8e4174d-6407-4bce-be36-2a6f2d7c38f7, requested item: boar
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item boar from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added f8e4174d-6407-4bce-be36-2a6f2d7c38f7 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up fish as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 7a8230df-e933-4d57-9d02-ab661f05bbf7, requested item: fish
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item fish from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 7a8230df-e933-4d57-9d02-ab661f05bbf7 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up salt as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 8b43978f-1eb1-483a-9b0a-c138166f4019, requested item: salt
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item salt from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 8b43978f-1eb1-483a-9b0a-c138166f4019 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up boar as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 971a1fe4-76cc-4ebb-a50d-9d56eb105e1e, requested item: boar
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item boar from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 971a1fe4-76cc-4ebb-a50d-9d56eb105e1e to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up fish as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: 46d0cc67-9693-49d3-ac2d-5bebda3585a4, requested item: fish
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item fish from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added 46d0cc67-9693-49d3-ac2d-5bebda3585a4 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up salt as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: d5492dd4-5480-468c-86ff-9a604b1bcd27, requested item: salt
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item salt from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added d5492dd4-5480-468c-86ff-9a604b1bcd27 to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up boar as new buyer item for ID: 2
+2022-10-20 at 18:05:57 GMT-04:00 Thread sleep - 2 seconds
+2022-10-20 at 18:05:57 GMT-04:00 Started a new lookUp with lookUp Id: f475b379-d73b-4bc4-964a-116c432183ee, requested item: boar
+2022-10-20 at 18:05:57 GMT-04:00{1=http://127.0.0.1:5000, 2=http://127.0.0.1:5001}
+2022-10-20 at 18:05:57 GMT-04:00{2=[1]}
+2022-10-20 at 18:05:57 GMT-04:00 Message props: 0[]
+2022-10-20 at 18:05:57 GMT-04:00 Reached initial buyer in reply backward path
+2022-10-20 at 18:05:57 GMT-04:00 Trying to buy item directly from Seller ID: 1
+2022-10-20 at 18:05:57 GMT-04:00 Bought item boar from Seller with ID 1
+2022-10-20 at 18:05:57 GMT-04:00 Added f475b379-d73b-4bc4-964a-116c432183ee to already processed lookUp Ids
+2022-10-20 at 18:05:57 GMT-04:00Picked up fish as new buyer item for ID: 2
+
+Process finished with exit code 130
