@@ -112,9 +112,10 @@ public class Leader {
         }
     }
 
-    private void checkQueueMessages() throws MalformedURLException {
-        if(priorityQueue.size() > 1) {
-            Message m = priorityQueue.poll();
+    private  void checkQueueMessages() throws MalformedURLException {
+
+        if(Leader.priorityQueue.size() > 1) {
+            Message m = Leader.priorityQueue.poll();
             if(processQueueMessage(m)) {
                 Buyer.processBuy(); // display bought item and add lookUp Id to processed LookUps
                 processedRequests++;
@@ -126,9 +127,10 @@ public class Leader {
         }
     }
 
-    private boolean processQueueMessage(Message m) throws MalformedURLException {
+    private  boolean processQueueMessage(Message m) throws MalformedURLException {
 
-        if(m.getBuyerID() == this.leaderID)
+        System.out.println("Inside the proccessQueue methos the buyer ID is:" +m.getBuyerID());
+        if(m.getBuyerID() == Leader.leaderID)
             return false;
 
         String requestedItem = m.getRequestedItem();
@@ -154,7 +156,7 @@ public class Leader {
         return foundSeller;
     }
 
-    private int sellItemToBuyer(int sellerID, Message m) throws MalformedURLException {
+    private  int sellItemToBuyer(int sellerID, Message m) throws MalformedURLException {
         System.out.println("Selling requested item" + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + "from sellerID"+ sellerID);
         HashMap<String, Integer> map = PeerCommunication.sellerItemCountMap.get(sellerID);
         int count = map.get(m.getRequestedItem());
@@ -163,7 +165,7 @@ public class Leader {
         return Constants.SELLER_PURCHASE_PRICES.get(sellerItem);
     }
 
-    public void sendTransactionAck(int buyerID, int sellerID, int income) throws MalformedURLException {
+    public  void sendTransactionAck(int buyerID, int sellerID, int income) throws MalformedURLException {
         List<Integer> peerIDs = List.of(buyerID, sellerID);
         for (int peerID : peerIDs) {
             URL url = new URL(PeerCommunication.peerIdURLMap.get(peerID));

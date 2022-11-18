@@ -126,7 +126,7 @@ public class PeerCommunication {
             System.out.println("I am at the initial node. Election should stop.");
             leaderID = Collections.max(message.peerIDs);
             System.out.println("Elected node is "+leaderID);
-            Leader.leaderID = leaderID;
+            //Leader.leaderID = leaderID;
             leader = new Leader(leaderID);
             sendLeaderIDBackwards(message, leaderID);
         }else {
@@ -182,13 +182,15 @@ public class PeerCommunication {
         }
     }
 
-//    public static boolean addRequestToQueue(Message m) {
-//        if(leader != null && leader.priorityQueue != null) {
-//            leader.priorityQueue.add(m);
-//            System.out.println("Added buyer's message to trader");
-//            return true;
-//        }
-//        return false;
-//    }
+    public static boolean addRequestToQueue(Message m) {
+        if(Leader.priorityQueue != null) {
+            Leader.priorityQueue.add(m);
+            //System.out.println("Added buyer's message to trader");
+            System.out.println("Adding request of buyer ID:" + m.getBuyerID());
+            System.out.println("size of queue:" + Leader.priorityQueue.size());
+            return true;
+        }
+        return false;
+    }
 
 }

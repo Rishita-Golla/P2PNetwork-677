@@ -1,5 +1,7 @@
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
@@ -123,14 +125,16 @@ public class Buyer extends PeerCommunication{
 
         System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
 
-        if(checkStatusOfLeader().equals("OK")) {
-            sendTimeStampUpdate(buyerID);
-            sendBuyMessageToTrader(m);
-        }else if (checkStatusOfLeader().equals("DOWN")) {
-            //if the request has timed out beyond MAX Value start re-election
-            ElectionMessage message = new ElectionMessage();
-            PeerCommunication.sendLeaderElectionMsg(message, buyerID);
-        }
+        sendMsg(m);
+
+//        if(checkStatusOfLeader().equals("OK")) {
+//            sendTimeStampUpdate(buyerID);
+//            sendBuyMessageToTrader(m);
+//        }else if (checkStatusOfLeader().equals("DOWN")) {
+//            //if the request has timed out beyond MAX Value start re-election
+//            ElectionMessage message = new ElectionMessage();
+//            PeerCommunication.sendLeaderElectionMsg(message, buyerID);
+//        }
     }
 
     // To avoid bottleneck add message to trader's queue directly
@@ -165,6 +169,21 @@ public class Buyer extends PeerCommunication{
     public String checkStatusOfLeader() {
         return PeerCommunication.checkLeaderStatus();
     }
+
+    public void sendMsg(Message message) throws MalformedURLException {
+
+        URL url = new URL(peerIdURLMap.get(PeerCommunication.leaderID));
+        try {
+            Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+            RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+            boolean val = remoteInterface.addRequestToQueue(message);
+            System.out.println("Added to queue:"+val);
+        }
+        catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void receiveTransactionAck(boolean ack) {
         if(ack) {
             System.out.println("Buyer " + buyerID + " bought buyer item " + buyerItem);

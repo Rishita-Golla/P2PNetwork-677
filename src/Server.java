@@ -128,6 +128,11 @@ class RemoteInterfaceImpl implements RemoteInterface{
     public void sendLeaderIDBackwards(ElectionMessage message, int leaderID) {
         PeerCommunication.sendLeaderIDBackwards(message,leaderID);
     }
+
+    @Override
+    public boolean addRequestToQueue(Message message) throws RemoteException, MalformedURLException {
+        return PeerCommunication.addRequestToQueue(message);
+    }
 }
 
 public class Server {

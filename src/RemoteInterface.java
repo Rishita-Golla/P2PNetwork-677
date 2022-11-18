@@ -12,5 +12,5 @@ public interface RemoteInterface extends Remote {
     public void sendTransactionAck(String role, boolean ack, int income) throws RemoteException;
 
     void sendLeaderIDBackwards(ElectionMessage message, int leaderID) throws RemoteException;
-    //public boolean addRequestToQueue(Message message) throws RemoteException, MalformedURLException;
+    public boolean addRequestToQueue(Message message) throws RemoteException, MalformedURLException;
 }
