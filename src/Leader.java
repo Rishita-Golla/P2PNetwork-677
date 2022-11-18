@@ -141,9 +141,11 @@ public class Leader {
     private void sellItemToBuyer(int sellerID, Message m) {
         System.out.println("Selling requested item" + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + "from sellerID"+ sellerID);
         // update trader sellerItemCountMap
-
-
-
+        int countOfItem = sellerItemCountMap.get(sellerID).get(m.getRequestedItem());
+        countOfItem--;
+        HashMap map = new HashMap();
+        map.put(m.getRequestedItem(), countOfItem);
+        sellerItemCountMap.put(sellerID, map);
     }
 
     public void sendTransactionAck(int buyerID, int sellerID) throws MalformedURLException {
