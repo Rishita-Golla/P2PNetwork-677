@@ -1,0 +1,6 @@
+1:fish,4
+1:boar,4
+1:salt,4
+*
+2:fish,4
+*
