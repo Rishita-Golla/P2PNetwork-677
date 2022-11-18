@@ -1,7 +1,5 @@
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
@@ -100,6 +98,17 @@ public class Buyer extends PeerCommunication{
         }
     }
 
+    public void discardReply(String lookupId) {
+        try {
+            semaphore.acquire();
+            System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + " and lookUp "+ lookupId);
+            timedOutReplies.add(lookupId);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        semaphore.release();
+    }
+
     /**
      * LAB 2 CODE
      */
@@ -135,17 +144,6 @@ public class Buyer extends PeerCommunication{
         int index = Constants.POSSIBLE_ITEMS.indexOf(buyerItem);
         buyerItem = Constants.POSSIBLE_ITEMS.get((index+1)%size);
         System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
-    }
-
-    public void discardReply(String lookupId) {
-        try {
-            semaphore.acquire();
-            System.out.println(formatter.format(date)+ " Timed out request for "+ buyerID + " and lookUp "+ lookupId);
-            timedOutReplies.add(lookupId);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        semaphore.release();
     }
 
     public void receiveTimeStampUpdate(int timestamp) {

@@ -96,6 +96,10 @@ public class PeerCommunication {
         }
     }
 
+    /**
+     * LAB 2 CODE
+     */
+
     public static void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws MalformedURLException {
 
         int maxNodeID = 0; //next node ID to send call to

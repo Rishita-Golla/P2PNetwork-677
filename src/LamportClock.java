@@ -4,6 +4,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Map;
 
 public class LamportClock {
 
@@ -27,15 +28,15 @@ public class LamportClock {
 
     public void sendTimestampUpdate(int buyerID) throws MalformedURLException {
 
-        for(int peerID : PeerCommunication.neighborPeerIDs.get(1)) {// change maps
-            if(peerID == buyerID)
+        for(Map.Entry<Integer, String> entry : PeerCommunication.peerIdURLMap.entrySet()) {
+            if(entry.getKey() == buyerID)
                 continue;
 
-            URL url = new URL("peerID"); //change
+            URL url = new URL(entry.getValue());
             try{
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
                 RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
-                remoteInterface.sendTimeStampUpdate(this.timestamp, PeerCommunication.rolesMap.get(peerID)); // use rolesMap
+                remoteInterface.sendTimeStampUpdate(this.timestamp, PeerCommunication.rolesMap.get(entry.getKey()));
             } catch (RemoteException | NotBoundException e) {
                 e.printStackTrace();
             }

@@ -42,7 +42,6 @@ public class Client {
                 PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
                 PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
                 // Add buyerAndSeller as another role
-                // have all peers in list with url:host
             }
         }
 

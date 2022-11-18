@@ -9,23 +9,23 @@ import java.io.*;
 
 public class Leader {
 
-    int LeaderID;
+    int leaderID;
+    public static PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
+    public HashMap<Integer, HashMap<String, Integer>> sellerItemCountMap = new HashMap<>(); //initialize it (PeerComm) or keep it with trader
+    public static int processedRequests;
+
+    Leader() {
+        processedRequests = 0;
+        readDataFromFile();
+        new ProcessThread().start();
+    }
 
     public int getLeaderID() {
-        return LeaderID;
+        return leaderID;
     }
 
     public void setLeaderID(int leaderID) {
-        LeaderID = leaderID;
-    }
-    PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
-    public HashMap<Integer, HashMap<String, Integer>> sellerItemCountMap = new HashMap<>(); //initialize it (PeerComm) or keep it with trader
-    int processedRequests;
-
-    Leader() {
-        this.processedRequests = 0;
-        readDataFromFile();
-        new ProcessThread().start();
+        this.leaderID = leaderID;
     }
 
     public void readDataFromFile() {
@@ -37,9 +37,9 @@ public class Leader {
             // create BufferedReader object from the File
             br = new BufferedReader(new FileReader(file));
 
+            HashMap<String,Integer> map = new HashMap();
             String line = null;
             while ((line = br.readLine()) != null) {
-
                 // split the line by :
                 String[] parts = line.split(":");
                 // first part is name, second is number
@@ -50,13 +50,14 @@ public class Leader {
                 if(sellerID == getLeaderID()) {
                     continue;
                 }else{
-                    HashMap<String,Integer> map = new HashMap();
                     map.put(item, itemCount);
-                    PeerCommunication.sellerItemCountMap.put(sellerID, map);
+                }
+                if(line.equals("*")) {
+                    sellerItemCountMap.put(sellerID, map);
+                    map.clear();
                 }
             }
             br.close();
-
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -81,6 +82,7 @@ public class Leader {
                     bf.write(entry1.getValue());
                     bf.newLine();
                 }
+                bf.write("*");
             }
             bf.flush();
             bf.close();
@@ -88,7 +90,6 @@ public class Leader {
         catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public class ProcessThread extends Thread{
@@ -104,23 +105,29 @@ public class Leader {
         }
     }
 
-    private void checkQueueMessages() {
+    private void checkQueueMessages() throws MalformedURLException {
         if(priorityQueue.size() > 1) {
             Message m = priorityQueue.poll();
             if(processQueueMessage(m)) {
-                // don't process trader's buy request
                 Buyer.processBuy(); // display bought item and add lookUp Id to processed LookUps
-                this.processedRequests++;
+                processedRequests++;
+            } else {
+                System.out.println("Didn't process leader's previous buy requests");
             }
         } else {
             System.out.println("No messages to process in queue");
         }
     }
 
-    private boolean processQueueMessage(Message m) {
+    private boolean processQueueMessage(Message m) throws MalformedURLException {
+
+        if(m.getBuyerID() == this.leaderID)
+            return false;
+
         String requestedItem = m.getRequestedItem();
         boolean foundSeller = false;
         int sellerID = -1;
+        int totalIncome = 0;
 
         for(Map.Entry<Integer, HashMap<String, Integer>> entry : sellerItemCountMap.entrySet()) {
             if(entry.getKey() == PeerCommunication.leaderID)
@@ -133,25 +140,29 @@ public class Leader {
                 }
             }
 
-        if(foundSeller)
-            sellItemToBuyer(sellerID, m);
+        if(foundSeller) {
+            totalIncome = sellItemToBuyer(sellerID, m);
+            sendTransactionAck(m.getBuyerID(), sellerID, (int) (totalIncome - 0.2*totalIncome));
+        }
         return foundSeller;
     }
 
-    private void sellItemToBuyer(int sellerID, Message m) {
+    private int sellItemToBuyer(int sellerID, Message m) throws MalformedURLException {
         System.out.println("Selling requested item" + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + "from sellerID"+ sellerID);
-        // update trader sellerItemCountMap
-
-
-
+        HashMap<String, Integer> map = sellerItemCountMap.get(sellerID);
+        int count = map.get(m.getRequestedItem());
+        map.put(m.getRequestedItem(), --count);
+        String sellerItem = map.keySet().iterator().next();
+        return Constants.SELLER_PURCHASE_PRICES.get(sellerItem);
     }
 
-    public void sendTransactionAck(int buyerID, int sellerID) throws MalformedURLException {
+    public void sendTransactionAck(int buyerID, int sellerID, int income) throws MalformedURLException {
         List<Integer> peerIDs = List.of(buyerID, sellerID);
-        int income = 0; // get this from map
         for (int peerID : peerIDs) {
             URL url = new URL(PeerCommunication.peerIdURLMap.get(peerID));
             String role = PeerCommunication.rolesMap.get(peerID);
+            if(role.equals("buyer"))
+                income = 0;
             try {
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
                 RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");

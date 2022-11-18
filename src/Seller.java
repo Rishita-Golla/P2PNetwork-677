@@ -50,28 +50,27 @@ public class Seller extends PeerCommunication{
         return successfulSell;
     }
 
+    public static void processReply(Message m) {
+        replyBackwards(m);
+    }
+
+    /**
+     * LAB 2 CODE
+     */
+    public static void receiveTimeStampUpdate(int timestamp) {
+        lamportClock.receiveUpdate(timestamp);
+    }
+
+    public static void receiveTransactionAck(int income) {
+        System.out.println("Sold item" + Seller.sellerItem);
+        Seller.income += income;
+        System.out.println("Seller income for sellerID"+ sellerID + "is"+ Seller.income);
+    }
+
     public static void stockItems() {
         int index = Constants.POSSIBLE_ITEMS.indexOf(sellerItem);
         sellerItem = Constants.POSSIBLE_ITEMS.get((index+1)%3);
         System.out.println(formatter.format(date)+"Restocked items. Now selling item:"+sellerItem);
         currItemCount = Constants.MAX_ITEM_COUNT;
-    }
-
-    public static void processReply(Message m) {
-        replyBackwards(m);
-    }
-
-    public static void receiveTimeStampUpdate(int timestamp) {
-        lamportClock.receiveUpdate(timestamp);
-    }
-
-    // set purchase price for each item -> while sending from trader subtract 10% commission and send income to seller
-
-    public static void receiveTransactionAck(int income) {
-
-        System.out.println("Sold item" + Seller.sellerItem);
-        Seller.income += income;
-        System.out.println("Seller income for sellerID"+ sellerID + "is"+ Seller.income);
-        //dec seller item count from map
     }
 }

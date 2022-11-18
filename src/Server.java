@@ -131,7 +131,7 @@ public class Server {
     public static void main(String[] args) throws Exception{
         String pathToConfigFile;
         String pathToCommonFile;
-        String[] productsToSell;
+        String productsToSell;
         String[] productsToRestock;
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date date = new Date(System.currentTimeMillis());
@@ -140,11 +140,7 @@ public class Server {
             ID = Integer.parseInt(args[0]);
             pathToCommonFile = args[1];
             pathToConfigFile = args[2];
-            productsToSell = args[3].split(",");
-            if(args.length>=5)
-                productsToRestock = args[4].split(",");
-            else
-                productsToRestock = productsToSell;
+            productsToSell = args[3];
 
         }catch (Exception e){ //change
             System.err.println("Incorrect arguments. Usage java -c destination Server {id} {pathToConfig} {products to sell separated by ,} {maxCount} {[optional] products to restock separated by ,}");
@@ -160,7 +156,15 @@ public class Server {
                 String[] peersAndRoles = value.split(",");
                 PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
                 PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
+                if(PeerCommunication.sellerItemCountMap.containsKey(ID)){
+                    PeerCommunication.sellerItemCountMap.get(ID).put(productsToSell, Constants.MAX_ITEM_COUNT);
+                }else{
+                    HashMap map = new HashMap();
+                    map.put(productsToSell, Constants.MAX_ITEM_COUNT);
+                    PeerCommunication.sellerItemCountMap.put(ID, map);
+                }
             }
+
         }
 
        // HashMap<Integer,String> sellerItems = new HashMap<>();
@@ -176,7 +180,7 @@ public class Server {
                 String[] URLandNeighbors = value.split(",");
                 //sellerItems.put(key,URLandNeighbors[1]);
                 for (int i = 1; i < URLandNeighbors.length; i++)
-                    list.add(Integer.parseInt(URLandNeighbors[i]));
+                    list.add(Integer.parseInt(URLandNeighbors[i].trim()));
                 PeerCommunication.neighborPeerIDs.put(key,list); // update neighbor peerID map
 
             }
@@ -184,7 +188,7 @@ public class Server {
             ex.printStackTrace();
             throw ex;
         }
-        Seller.setSellerItem(productsToSell[0]);
+        Seller.setSellerItem(productsToSell);
         ServerThread serverThread = new ServerThread(ID);
         serverThread.start();
         System.out.println(formatter.format(date)+" I am node: "+ID+"selling item:"+Seller.sellerItem);

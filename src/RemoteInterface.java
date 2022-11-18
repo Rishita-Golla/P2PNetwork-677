@@ -9,5 +9,5 @@ public interface RemoteInterface extends Remote {
     public void replyBackwards(Message m, String role) throws RemoteException;
     public void sendTimeStampUpdate(int timestamp, String role) throws RemoteException;
     public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, NotBoundException;
-    public void sendTransactionAck(String role, boolean ack, int income);
+    public void sendTransactionAck(String role, boolean ack, int income) throws RemoteException;
 }

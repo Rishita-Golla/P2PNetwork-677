@@ -17,11 +17,13 @@ public class BuyerAndSeller extends PeerCommunication {
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     Date date = new Date(System.currentTimeMillis());
     LamportClock lamportClock = null;
+    private int income;
 
     public BuyerAndSeller(int peerID, String buyerItem, String sellerItem) {
         super();
         this.peerID = peerID;
         this.buyerItem = buyerItem;
+        this.income = 0;
         BuyerAndSeller.sellerItem = sellerItem;
         lamportClock = new LamportClock();
     }
@@ -192,8 +194,12 @@ public class BuyerAndSeller extends PeerCommunication {
     public void receiveTransactionAck(int income) {
         if(income != 0) {
             System.out.println("Sold item" + Seller.sellerItem);
-
+            System.out.println("Picking up a new buyer item");
+            pickNewBuyerItem();
+        } else {
+            System.out.println("Sold item" + Seller.sellerItem);
+            this.income += income; // check
+            System.out.println("Seller income for sellerID"+ Seller.sellerID + "is"+ this.income);
         }
-
     }
 }
