@@ -104,7 +104,8 @@ public class PeerCommunication {
         if(message.peerIDs.size() != 0){
             int nodeID = message.removeLastNodeInPath();
             System.out.println("The leader ID is propogated back to nodeID:"+nodeID);
-            PeerCommunication.leaderID = leaderID;
+            Leader.leaderID = leaderID;
+            System.out.println("Leader ID in sendLeaderIDBackwards 3 "+ Leader.leaderID);
             try {
                 URL url = new URL(peerIdURLMap.get(nodeID));
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
@@ -124,11 +125,10 @@ public class PeerCommunication {
         //if msg already contains this node we should stop
         if (message.peerIDs.contains(nodeID)) {
             System.out.println("I am at the initial node. Election should stop.");
-            leaderID = Collections.max(message.peerIDs);
-            System.out.println("Elected node is "+leaderID);
-            Leader.leaderID = leaderID;
-            leader = new Leader(leaderID);
-            sendLeaderIDBackwards(message, leaderID);
+            System.out.println("Elected node is "+Collections.max(message.peerIDs));
+           // Leader.leaderID = Collections.max(message.peerIDs);
+            leader = new Leader(Collections.max(message.peerIDs));
+            sendLeaderIDBackwards(message, Leader.leaderID);
         }else {
             if(nodeID == leaderID) {
                 //pick randome item
@@ -166,7 +166,7 @@ public class PeerCommunication {
 
     public static String checkLeaderStatus() {
         System.out.println("Check status leaderID"+Leader.leaderID);
-        if(leader.processedRequestsCount <= 10){
+        if(Leader.processedRequestsCount <= 10){
             return "OK";
         }else {
             leader.writeDataToFile();

@@ -108,7 +108,7 @@ public class Client {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-            System.out.println("The leader is:"+ PeerCommunication.leaderID);
+            System.out.println("The leader is:"+ Leader.leaderID);
             // starting buyer lookup
             if (onlyBuyer) {
                 try {

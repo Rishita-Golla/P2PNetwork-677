@@ -17,8 +17,8 @@ public class Leader {
     public HashSet<String> requestsInQueue = new HashSet<>();
 
     Leader(int leaderID) throws InterruptedException {
-        this.leaderID = leaderID;
-        this.processedRequestsCount = 0;
+        Leader.leaderID = leaderID;
+        processedRequestsCount = 0;
         readDataFromFile();
         Thread.sleep(2000);
         new ProcessThread().start();
