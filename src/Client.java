@@ -67,15 +67,9 @@ public class Client {
         ServerThread serverThread = new ServerThread(id);
         serverThread.start();
 
-        boolean startBazaar = false;
-        boolean leaderElection = true;
-
-        if(leaderElection) {
-            Thread.sleep(3000);
-            ElectionMessage message = new ElectionMessage();
-            PeerCommunication.sendLeaderElectionMsg(message, id);
-            leaderElection = false;
-        }
+        Thread.sleep(3000);
+        ElectionMessage message = new ElectionMessage();
+        PeerCommunication.sendLeaderElectionMsg(message, id);
 
         while(true) {
             try {
@@ -95,7 +89,7 @@ public class Client {
                 }
             } else {
                 try{
-                    buyerAndSeller.startLookUp();
+                    buyerAndSeller.startLookUpWithTrader();
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw e;

@@ -1,8 +1,10 @@
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
 public class BuyerAndSeller extends PeerCommunication {
@@ -133,6 +135,41 @@ public class BuyerAndSeller extends PeerCommunication {
         }
     }
 
+    public void startLookUpWithTrader() throws Exception {
+        Message m = new Message();
+        String lookupId = UUID.randomUUID().toString();
+        m.setLookUpId(lookupId);
+        m.setRequestedItem(buyerItem);
+        m.setTimestamp(lamportClock.getTimestamp());
+        m.setBuyerID(peerID);
+
+        System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
+
+        if(checkStatusOfLeader().equals("OK")) {
+            sendTimeStampUpdate(peerID);
+            sendBuyMessageToTrader(m);
+        }else if (checkStatusOfLeader().equals("DOWN")) {
+            //if the request has timed out beyond MAX Value start re-election
+            ElectionMessage message = new ElectionMessage();
+            PeerCommunication.sendLeaderElectionMsg(message, peerID);
+        }
+    }
+
+    // update peer's timestamps based on the buyer's timestamp before message is sent to the trader
+    public void sendTimeStampUpdate(int buyerID) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                lamportClock.sendTimestampUpdate(buyerID);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void sendBuyMessageToTrader(Message m) {
+        PeerCommunication.sendBuyMessage(m);
+    }
+
     public void discardReply(String lookupId) {
         try {
             semaphore.acquire();
@@ -144,7 +181,16 @@ public class BuyerAndSeller extends PeerCommunication {
         semaphore.release();
     }
 
-    public void receiveUpdate(int timestamp) {
+    public void receiveTimeStampUpdate(int timestamp) {
         lamportClock.receiveUpdate(timestamp);
+    }
+
+    public String checkStatusOfLeader() {
+        return PeerCommunication.checkLeaderStatus();
+    }
+
+    public void receiveTransactionAck() {
+        System.out.println("Sold item" + Seller.sellerItem);
+
     }
 }

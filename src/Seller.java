@@ -1,4 +1,3 @@
-import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,12 +61,20 @@ public class Seller extends PeerCommunication{
         replyBackwards(m);
     }
 
-    public static void receiveUpdate(int timestamp) {
+    public static void receiveTimeStampUpdate(int timestamp) {
         lamportClock.receiveUpdate(timestamp);
     }
 
     // set purchase price for each item -> while sending from trader subtract 10% commission and send income to seller
     public void processPaymentFromTrader(int income) {
         this.income += income;
+    }
+
+    public void receiveLeaderAck() {
+        processPaymentFromTrader(this.income); // change income
+    }
+
+    public static void receiveTransactionAck() {
+
     }
 }

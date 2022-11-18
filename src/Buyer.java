@@ -116,8 +116,6 @@ public class Buyer extends PeerCommunication{
         m.setTimestamp(lamportClock.getTimestamp());
         m.setBuyerID(buyerID);
 
-        //set requested item count for buyer
-
         System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
 
         if(checkStatusOfLeader().equals("OK")) {
@@ -140,8 +138,14 @@ public class Buyer extends PeerCommunication{
         }
     }
 
+    // To avoid, bottleneck add message to trader's queue directly
     private void sendBuyMessageToTrader(Message m) {
-        // add message to trader's queue directly
+        PeerCommunication.sendBuyMessage(m);
+    }
+
+    public void receiveLeaderAck() {
+
+
     }
 
     public void discardReply(String lookupId) {
@@ -155,7 +159,7 @@ public class Buyer extends PeerCommunication{
         semaphore.release();
     }
 
-    public void receiveUpdate(int timestamp) {
+    public void receiveTimeStampUpdate(int timestamp) {
         lamportClock.receiveUpdate(timestamp);
     }
 
@@ -171,16 +175,14 @@ public class Buyer extends PeerCommunication{
         });
     }
 
-    public String checkStatusOfLeader() throws MalformedURLException {
-        URL url = new URL(String.valueOf(PeerCommunication.leaderID));
-        try {
-            Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
-            RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
-            return remoteInterface.sendLeaderStatus();
+    public String checkStatusOfLeader() {
+        return PeerCommunication.checkLeaderStatus();
+    }
+    public void receiveTransactionAck(boolean ack) {
+        if(ack) {
+            System.out.println("Buyer " + buyerID + " bought buyer item " + buyerItem);
+            System.out.println("Picking up a new buyer item");
+            pickNewBuyerItem();
         }
-        catch (RemoteException | NotBoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

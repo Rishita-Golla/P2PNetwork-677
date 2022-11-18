@@ -103,14 +103,8 @@ public class PeerCommunication {
             int leaderID = Collections.max(message.peerIDs);
             leader = new Leader();
             System.out.println("Elected node is "+leaderID);
-            for(int peerID: message.getPath())
-            {
-                if(rolesMap.get(peerID).equals("seller")){
-                    //sellerInfo.put(peerID,)
-                }
-            }
-            return;
-        }else{
+            leader.readDataFromFile();
+        }else {
             if(nodeID == leaderID) {
                 List<Integer> neighbours =  neighborPeerIDs.get(nodeID);
                 for(int node: neighbours) {
@@ -118,7 +112,7 @@ public class PeerCommunication {
                         maxNodeID = node;
                     }
                 }
-            }else{
+            } else{
                 message.peerIDs.add(nodeID);
                 System.out.println("At node ID: "+nodeID +" sending election request forward.");
                 if(nodeID == peerIdURLMap.size()){
@@ -138,16 +132,20 @@ public class PeerCommunication {
             catch (RemoteException | NotBoundException e) {
                 e.printStackTrace();
             }
-
-            return;
         }
     }
 
-    public static String sendLeaderStatus() {
+    public static String checkLeaderStatus() {
         if(leader.processedRequests <= 10){
             return "OK";
         }else
             return "DOWN";
     }
 
+    protected static void sendBuyMessage(Message m) {
+        if(leader != null && leader.priorityQueue != null) {
+            leader.priorityQueue.add(m);
+            System.out.println("Added buyer's message to trader");
+        }
+    }
 }

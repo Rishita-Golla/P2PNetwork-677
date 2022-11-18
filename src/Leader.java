@@ -1,7 +1,10 @@
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.*;
 
 public class Leader {
 
@@ -15,10 +18,10 @@ public class Leader {
         new ProcessThread().start();
     }
 
-    private void readDataFromFile() {
+    public void readDataFromFile() {
         // open file
         // read data about buyer requests and seller items
-        // initialize queue with requests
+        // remove leader from map if seller
     }
 
     public class ProcessThread extends Thread{
@@ -76,5 +79,20 @@ public class Leader {
 
     public void processBuyMessage(Message m) {
         priorityQueue.add(m);
+    }
+
+    public void sendTransactionAck(int buyerID, int sellerID) throws MalformedURLException {
+        List<Integer> peerIDs = List.of(buyerID, sellerID);
+        for (int peerID : peerIDs) {
+            URL url = new URL(PeerCommunication.peerIdURLMap.get(peerID));
+            String role = PeerCommunication.rolesMap.get(peerID);
+            try {
+                Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+                RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+                remoteInterface.sendTransactionAck(role, true);
+            } catch (RemoteException | NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

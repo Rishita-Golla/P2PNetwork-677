@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -70,7 +69,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
         this.productName = productName;
     }
 
-    // based on the role of buyer/seller message is further broadcasted
+    // based on the role of buyer/seller message is further broadcast
     @Override
     public void checkOrBroadcastMessage(Message m, int peerID, String role) throws MalformedURLException {
         System.out.println(formatter.format(date)+" Reached new node for communication "+ peerID + " item owned: "+ Seller.sellerItem);
@@ -103,21 +102,32 @@ class RemoteInterfaceImpl implements RemoteInterface{
     @Override
     public void sendTimeStampUpdate(int timestamp, String role) {
         if(role.equals("buyer"))
-            Client.buyer.receiveUpdate(timestamp);
+            Client.buyer.receiveTimeStampUpdate(timestamp);
         else if(role.equals("seller"))
-            Seller.receiveUpdate(timestamp);
+            Seller.receiveTimeStampUpdate(timestamp);
         else
-            Client.buyerAndSeller.receiveUpdate(timestamp);
+            Client.buyerAndSeller.receiveTimeStampUpdate(timestamp);
     }
 
     @Override
-    public String sendLeaderStatus() {
-        return PeerCommunication.sendLeaderStatus();
+    public String checkLeaderStatus() {
+        return PeerCommunication.checkLeaderStatus();
     }
 
     @Override
-    public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, NotBoundException {
+    public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException {
         PeerCommunication.sendLeaderElectionMsg(message, nodeID);
+    }
+
+    @Override
+    public void sendTransactionAck(String role, boolean ack) {
+        if(role.equals("buyer")) {
+            Client.buyer.receiveTransactionAck(ack);
+        } else if(role.equals("seller")) {
+            Seller.receiveTransactionAck();
+        } else {
+            // add based on role for buyer and seller
+        }
     }
 }
 
