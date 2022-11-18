@@ -168,7 +168,7 @@ public class BuyerAndSeller extends PeerCommunication {
         });
     }
 
-    private void sendBuyMessageToTrader(Message m) {
+    private void sendBuyMessageToTrader(Message m) throws MalformedURLException {
         PeerCommunication.sendBuyMessage(m);
     }
 

@@ -134,7 +134,7 @@ public class Buyer extends PeerCommunication{
     }
 
     // To avoid bottleneck add message to trader's queue directly
-    private void sendBuyMessageToTrader(Message m) {
+    private void sendBuyMessageToTrader(Message m) throws MalformedURLException {
         PeerCommunication.sendBuyMessage(m);
     }
 

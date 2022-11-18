@@ -6,22 +6,26 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class Leader {
 
-    int leaderID;
+    public static int leaderID;
     public static PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
-    public HashMap<Integer, HashMap<String, Integer>> sellerItemCountMap = new HashMap<>(); //initialize it (PeerComm) or keep it with trader
     public static int processedRequests;
+    static int processedRequestsCount;
+    public HashSet<String> requestsInQueue = new HashSet<>();
 
-    Leader() {
-        processedRequests = 0;
+    Leader(int leaderID) throws InterruptedException {
+        this.leaderID = leaderID;
+        this.processedRequestsCount = 0;
         readDataFromFile();
+        Thread.sleep(2000);
         new ProcessThread().start();
     }
 
     public int getLeaderID() {
-        return leaderID;
+        return this.leaderID;
     }
 
     public void setLeaderID(int leaderID) {
@@ -31,33 +35,36 @@ public class Leader {
     public void readDataFromFile() {
         BufferedReader br = null;
         try {
-            String outputPath = "sellerInfo.txt";
+            String outputPath = "src/sellerInfo.txt";
             File file = new File(outputPath);
-
             // create BufferedReader object from the File
             br = new BufferedReader(new FileReader(file));
-
-            HashMap<String,Integer> map = new HashMap();
             String line = null;
+            int sellerID = -1;
+            HashMap<String,Integer> map = new HashMap();
             while ((line = br.readLine()) != null) {
                 // split the line by :
-                String[] parts = line.split(":");
-                // first part is name, second is number
-                int sellerID = Integer.parseInt(parts[0].trim());
-                String[] sellerInfo = parts[1].trim().split(",");
-                String item = sellerInfo[0];
-                int itemCount = Integer.parseInt(sellerInfo[1].trim());
-                if(sellerID == getLeaderID()) {
-                    continue;
-                }else{
-                    map.put(item, itemCount);
-                }
                 if(line.equals("*")) {
-                    sellerItemCountMap.put(sellerID, map);
+                    HashMap mapCopy = (HashMap) map.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                    PeerCommunication.sellerItemCountMap.put(sellerID, mapCopy);
+                    //System.out.println("SellerItemCountMap"+sellerItemCountMap);
                     map.clear();
+                }else{
+                    String[] parts = line.split(":");
+                    // first part is name, second is number
+                    sellerID = Integer.parseInt(parts[0].trim());
+                    String[] sellerInfo = parts[1].trim().split(",");
+                    String item = sellerInfo[0];
+                    int itemCount = Integer.parseInt(sellerInfo[1].trim());
+                    if(sellerID == getLeaderID()) {
+                        continue;
+                    }else{
+                        map.put(item, itemCount);
+                    }
                 }
             }
             br.close();
+            System.out.println("SellerItemCountMap"+PeerCommunication.sellerItemCountMap);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -114,8 +121,8 @@ public class Leader {
             } else {
                 System.out.println("Didn't process leader's previous buy requests");
             }
-        } else {
-            System.out.println("No messages to process in queue");
+//        } else {
+//            System.out.println("No messages to process in queue");
         }
     }
 
@@ -129,7 +136,7 @@ public class Leader {
         int sellerID = -1;
         int totalIncome = 0;
 
-        for(Map.Entry<Integer, HashMap<String, Integer>> entry : sellerItemCountMap.entrySet()) {
+        for(Map.Entry<Integer, HashMap<String, Integer>> entry : PeerCommunication.sellerItemCountMap.entrySet()) {
             if(entry.getKey() == PeerCommunication.leaderID)
                 continue;
             for(Map.Entry<String, Integer> itemAndCountMap : entry.getValue().entrySet())
@@ -149,7 +156,7 @@ public class Leader {
 
     private int sellItemToBuyer(int sellerID, Message m) throws MalformedURLException {
         System.out.println("Selling requested item" + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + "from sellerID"+ sellerID);
-        HashMap<String, Integer> map = sellerItemCountMap.get(sellerID);
+        HashMap<String, Integer> map = PeerCommunication.sellerItemCountMap.get(sellerID);
         int count = map.get(m.getRequestedItem());
         map.put(m.getRequestedItem(), --count);
         String sellerItem = map.keySet().iterator().next();

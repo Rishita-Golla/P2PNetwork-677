@@ -17,4 +17,13 @@ public class ElectionMessage implements Serializable {
     public void addLastInPath(int ID) {
         this.peerIDs.add(ID);
     }
+
+    public String sellerItem;
+
+    public int removeLastNodeInPath() { //check return type
+        int lastNode = peerIDs.get(peerIDs.size()-1);
+        peerIDs.remove(peerIDs.get(peerIDs.size()-1));
+        return lastNode;
+    }
+
 }

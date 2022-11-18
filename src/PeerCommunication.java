@@ -95,22 +95,40 @@ public class PeerCommunication {
             e.printStackTrace();
         }
     }
-
     /**
      * LAB 2 CODE
      */
 
-    public static void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws MalformedURLException {
+    public static void sendLeaderIDBackwards(ElectionMessage message, int leaderID) {
+        System.out.println("Path of message before removal"+ message.getPath());
+        if(message.peerIDs.size() != 0){
+            int nodeID = message.removeLastNodeInPath();
+            System.out.println("The leader ID is propogated back to nodeID:"+nodeID);
+            PeerCommunication.leaderID = leaderID;
+            try {
+                URL url = new URL(peerIdURLMap.get(nodeID));
+                Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+                RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+                remoteInterface.sendLeaderIDBackwards(message, leaderID);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws MalformedURLException, InterruptedException {
 
         int maxNodeID = 0; //next node ID to send call to
 
         //if msg already contains this node we should stop
         if (message.peerIDs.contains(nodeID)) {
             System.out.println("I am at the initial node. Election should stop.");
-            int leaderID = Collections.max(message.peerIDs);
-            leader = new Leader();
+            leaderID = Collections.max(message.peerIDs);
             System.out.println("Elected node is "+leaderID);
-            leader.readDataFromFile();
+            Leader.leaderID = leaderID;
+            leader = new Leader(leaderID);
+            sendLeaderIDBackwards(message, leaderID);
         }else {
             if(nodeID == leaderID) {
                 //pick randome item
@@ -147,7 +165,8 @@ public class PeerCommunication {
     }
 
     public static String checkLeaderStatus() {
-        if(leader.processedRequests <= 10){
+        System.out.println("Check status leaderID"+Leader.leaderID);
+        if(leader.processedRequestsCount <= 10){
             return "OK";
         }else {
             leader.writeDataToFile();
@@ -155,10 +174,21 @@ public class PeerCommunication {
         }
     }
 
-    protected static void sendBuyMessage(Message m) {
+    protected static void sendBuyMessage(Message m) throws MalformedURLException {
+        //String checkString = m.getBuyerID()+"-"+m.
         if(leader != null && leader.priorityQueue != null) {
             leader.priorityQueue.add(m);
             System.out.println("Added buyer's message to trader");
         }
     }
+
+//    public static boolean addRequestToQueue(Message m) {
+//        if(leader != null && leader.priorityQueue != null) {
+//            leader.priorityQueue.add(m);
+//            System.out.println("Added buyer's message to trader");
+//            return true;
+//        }
+//        return false;
+//    }
+
 }

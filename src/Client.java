@@ -1,6 +1,4 @@
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.FileHandler;
@@ -12,6 +10,35 @@ public class Client {
     public static BuyerAndSeller buyerAndSeller;
 
     private Client() {}
+
+    public static void writeDataToFile() {
+        // open file
+        // read data about buyer requests and seller items
+        // initialize queue with requests
+        String outputPath = "sellerInfo.txt";
+        File file = new File(outputPath);
+        BufferedWriter bf = null;
+        try {
+            // create new BufferedWriter for the output file
+            bf = new BufferedWriter(new FileWriter(file));
+            for (Map.Entry<Integer, HashMap<String,Integer>> entry : PeerCommunication.sellerItemCountMap.entrySet()) {
+                for(Map.Entry<String,Integer> entry1: entry.getValue().entrySet()){
+                    bf.write(entry.getKey() + ":");
+                    bf.write(entry1.getKey());
+                    bf.write(",");
+                    bf.write(entry1.getValue());
+                    bf.newLine();
+                }
+                bf.write("*");
+            }
+            bf.flush();
+            bf.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public static void main (String[] args) throws Exception {
         boolean onlyBuyer = true;
@@ -54,7 +81,7 @@ public class Client {
                 Integer key = Integer.parseInt((String) entry.getKey());
                 String value = (String) entry.getValue();
                 String[] URLandNeighbors = value.split(",");
-                for (int i = 1; i < URLandNeighbors.length; i++)
+                for (int i = 0; i < URLandNeighbors.length; i++)
                     list.add(Integer.parseInt(URLandNeighbors[i]));
                 PeerCommunication.neighborPeerIDs.put(key,list);
 
@@ -66,18 +93,22 @@ public class Client {
         ServerThread serverThread = new ServerThread(id);
         serverThread.start();
 
+        //writeDataToFile();
         Thread.sleep(3000);
         ElectionMessage message = new ElectionMessage();
         PeerCommunication.sendLeaderElectionMsg(message, id);
 
+        Thread.sleep(3000);
+
         while(true) {
+
             try {
                 System.out.println(formatter.format(date) + " Thread sleep - 2 seconds");
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-
+            System.out.println("The leader is:"+ PeerCommunication.leaderID);
             // starting buyer lookup
             if (onlyBuyer) {
                 try {
@@ -95,5 +126,6 @@ public class Client {
                 }
             }
         }
+
     }
 }

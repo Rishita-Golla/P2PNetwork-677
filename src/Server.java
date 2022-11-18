@@ -109,7 +109,7 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     @Override
-    public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException {
+    public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, InterruptedException {
         PeerCommunication.sendLeaderElectionMsg(message, nodeID);
     }
 
@@ -122,6 +122,11 @@ class RemoteInterfaceImpl implements RemoteInterface{
         } else {
             Client.buyerAndSeller.receiveTransactionAck(income);
         }
+    }
+
+    @Override
+    public void sendLeaderIDBackwards(ElectionMessage message, int leaderID) {
+        PeerCommunication.sendLeaderIDBackwards(message,leaderID);
     }
 }
 
@@ -156,13 +161,13 @@ public class Server {
                 String[] peersAndRoles = value.split(",");
                 PeerCommunication.peerIdURLMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[0]);
                 PeerCommunication.rolesMap.put(Integer.parseInt((String) entry.getKey()),peersAndRoles[1]);
-                if(PeerCommunication.sellerItemCountMap.containsKey(ID)){
-                    PeerCommunication.sellerItemCountMap.get(ID).put(productsToSell, Constants.MAX_ITEM_COUNT);
-                }else{
-                    HashMap map = new HashMap();
-                    map.put(productsToSell, Constants.MAX_ITEM_COUNT);
-                    PeerCommunication.sellerItemCountMap.put(ID, map);
-                }
+//                if(PeerCommunication.sellerItemCountMap.containsKey(ID)){
+//                    PeerCommunication.sellerItemCountMap.get(ID).put(productsToSell, Constants.MAX_ITEM_COUNT);
+//                }else{
+//                    HashMap map = new HashMap();
+//                    map.put(productsToSell, Constants.MAX_ITEM_COUNT);
+//                    PeerCommunication.sellerItemCountMap.put(ID, map);
+//                }
             }
 
         }
@@ -175,11 +180,11 @@ public class Server {
             for (Map.Entry<Object, Object> entry : prop.entrySet()) {
                 ArrayList<Integer> list = new ArrayList();
                 int key = Integer.parseInt((String) entry.getKey());
-                //set.add(key);
+                //System.out.println("Key"+ key);
                 String value = (String) entry.getValue();
                 String[] URLandNeighbors = value.split(",");
                 //sellerItems.put(key,URLandNeighbors[1]);
-                for (int i = 1; i < URLandNeighbors.length; i++)
+                for (int i = 0; i < URLandNeighbors.length; i++)
                     list.add(Integer.parseInt(URLandNeighbors[i].trim()));
                 PeerCommunication.neighborPeerIDs.put(key,list); // update neighbor peerID map
 
@@ -188,6 +193,12 @@ public class Server {
             ex.printStackTrace();
             throw ex;
         }
+        System.out.println("Peers URL and id");
+        System.out.println(PeerCommunication.peerIdURLMap);
+        System.out.println("Neighbour map");
+        System.out.println(PeerCommunication.neighborPeerIDs);
+        System.out.println(PeerCommunication.sellerItemCountMap);
+
         Seller.setSellerItem(productsToSell);
         ServerThread serverThread = new ServerThread(ID);
         serverThread.start();
