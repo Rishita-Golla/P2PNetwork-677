@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
-
 class ServerThread implements Runnable {
     String url;
     int ID;
@@ -110,23 +109,18 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     @Override
-    public String checkLeaderStatus() {
-        return PeerCommunication.checkLeaderStatus();
-    }
-
-    @Override
     public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException {
         PeerCommunication.sendLeaderElectionMsg(message, nodeID);
     }
 
     @Override
-    public void sendTransactionAck(String role, boolean ack) {
+    public void sendTransactionAck(String role, boolean ack, int income) {
         if(role.equals("buyer")) {
             Client.buyer.receiveTransactionAck(ack);
         } else if(role.equals("seller")) {
-            Seller.receiveTransactionAck();
+            Seller.receiveTransactionAck(income);
         } else {
-            // add based on role for buyer and seller
+            Client.buyerAndSeller.receiveTransactionAck(income);
         }
     }
 }

@@ -13,11 +13,11 @@ public class Seller extends PeerCommunication{
     static SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     static Date date = new Date(System.currentTimeMillis());
     static LamportClock lamportClock = null;
-    private int income;
+    private static int income;
 
     public Seller(HashMap<Integer, String> peerIdURLMap, HashMap<Integer, List<Integer>> neighborPeerIDs) {
         super(peerIdURLMap, neighborPeerIDs);
-        this.income = 0;
+        income = 0;
         lamportClock = new LamportClock();
     }
 
@@ -66,15 +66,12 @@ public class Seller extends PeerCommunication{
     }
 
     // set purchase price for each item -> while sending from trader subtract 10% commission and send income to seller
-    public void processPaymentFromTrader(int income) {
-        this.income += income;
-    }
 
-    public void receiveLeaderAck() {
-        processPaymentFromTrader(this.income); // change income
-    }
+    public static void receiveTransactionAck(int income) {
 
-    public static void receiveTransactionAck() {
-
+        System.out.println("Sold item" + Seller.sellerItem);
+        Seller.income += income;
+        System.out.println("Seller income for sellerID"+ sellerID + "is"+ Seller.income);
+        //dec seller item count from map
     }
 }

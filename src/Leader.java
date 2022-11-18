@@ -91,7 +91,6 @@ public class Leader {
 
     }
 
-
     public class ProcessThread extends Thread{
         public void run() {
             while(true){
@@ -149,13 +148,14 @@ public class Leader {
 
     public void sendTransactionAck(int buyerID, int sellerID) throws MalformedURLException {
         List<Integer> peerIDs = List.of(buyerID, sellerID);
+        int income = 0; // get this from map
         for (int peerID : peerIDs) {
             URL url = new URL(PeerCommunication.peerIdURLMap.get(peerID));
             String role = PeerCommunication.rolesMap.get(peerID);
             try {
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
                 RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
-                remoteInterface.sendTransactionAck(role, true);
+                remoteInterface.sendTransactionAck(role, true, income); // for buyer send 0
             } catch (RemoteException | NotBoundException e) {
                 e.printStackTrace();
             }

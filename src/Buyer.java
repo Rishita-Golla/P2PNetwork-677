@@ -48,14 +48,6 @@ public class Buyer extends PeerCommunication{
         return false;
     }
 
-    // pick a new item in cyclic order
-    public void pickNewBuyerItem() {
-        int size = Constants.POSSIBLE_ITEMS.size();
-        int index = Constants.POSSIBLE_ITEMS.indexOf(buyerItem);
-        buyerItem = Constants.POSSIBLE_ITEMS.get((index+1)%size);
-        System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
-    }
-
     public void processMessageForward(Message m) throws MalformedURLException {
         checkOrBroadcastMessage(m, "", buyerID, "buyer");
     }
@@ -108,6 +100,10 @@ public class Buyer extends PeerCommunication{
         }
     }
 
+    /**
+     * LAB 2 CODE
+     */
+
     public void startLookUpWithTrader() throws Exception {
         Message m = new Message();
         String lookupId = UUID.randomUUID().toString();
@@ -126,26 +122,19 @@ public class Buyer extends PeerCommunication{
             ElectionMessage message = new ElectionMessage();
             PeerCommunication.sendLeaderElectionMsg(message, buyerID);
         }
-
-        for(int i = 0; i < 5; i++) {
-            Thread.sleep(Constants.MAX_TIMEOUT/5);
-            if(timedOutReplies.contains(lookupId))
-                break;
-        }
-
-        if(!timedOutReplies.contains(lookupId)) {
-            discardReply(lookupId);
-        }
     }
 
-    // To avoid, bottleneck add message to trader's queue directly
+    // To avoid bottleneck add message to trader's queue directly
     private void sendBuyMessageToTrader(Message m) {
         PeerCommunication.sendBuyMessage(m);
     }
 
-    public void receiveLeaderAck() {
-
-
+    // pick a new item in cyclic order
+    public void pickNewBuyerItem() {
+        int size = Constants.POSSIBLE_ITEMS.size();
+        int index = Constants.POSSIBLE_ITEMS.indexOf(buyerItem);
+        buyerItem = Constants.POSSIBLE_ITEMS.get((index+1)%size);
+        System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
     }
 
     public void discardReply(String lookupId) {

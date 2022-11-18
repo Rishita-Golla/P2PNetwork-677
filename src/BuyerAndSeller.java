@@ -189,8 +189,11 @@ public class BuyerAndSeller extends PeerCommunication {
         return PeerCommunication.checkLeaderStatus();
     }
 
-    public void receiveTransactionAck() {
-        System.out.println("Sold item" + Seller.sellerItem);
+    public void receiveTransactionAck(int income) {
+        if(income != 0) {
+            System.out.println("Sold item" + Seller.sellerItem);
+
+        }
 
     }
 }

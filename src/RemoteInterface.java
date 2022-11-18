@@ -8,7 +8,6 @@ public interface RemoteInterface extends Remote {
     public boolean sellItem(String requestedItem, String role) throws RemoteException;
     public void replyBackwards(Message m, String role) throws RemoteException;
     public void sendTimeStampUpdate(int timestamp, String role) throws RemoteException;
-    public String checkLeaderStatus() throws RemoteException;
     public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, NotBoundException;
-    public void sendTransactionAck(String role, boolean ack);
+    public void sendTransactionAck(String role, boolean ack, int income);
 }
