@@ -5,9 +5,19 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
+import java.io.*;
 
 public class Leader {
 
+    int LeaderID;
+
+    public int getLeaderID() {
+        return LeaderID;
+    }
+
+    public void setLeaderID(int leaderID) {
+        LeaderID = leaderID;
+    }
     PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
     public HashMap<Integer, HashMap<String, Integer>> sellerItemCountMap = new HashMap<>(); //initialize it (PeerComm) or keep it with trader
     int processedRequests;
@@ -19,10 +29,68 @@ public class Leader {
     }
 
     public void readDataFromFile() {
+        BufferedReader br = null;
+        try {
+            String outputPath = "sellerInfo.txt";
+            File file = new File(outputPath);
+
+            // create BufferedReader object from the File
+            br = new BufferedReader(new FileReader(file));
+
+            String line = null;
+            while ((line = br.readLine()) != null) {
+
+                // split the line by :
+                String[] parts = line.split(":");
+                // first part is name, second is number
+                int sellerID = Integer.parseInt(parts[0].trim());
+                String[] sellerInfo = parts[1].trim().split(",");
+                String item = sellerInfo[0];
+                int itemCount = Integer.parseInt(sellerInfo[1].trim());
+                if(sellerID == getLeaderID()) {
+                    continue;
+                }else{
+                    HashMap<String,Integer> map = new HashMap();
+                    map.put(item, itemCount);
+                    PeerCommunication.sellerItemCountMap.put(sellerID, map);
+                }
+            }
+            br.close();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeDataToFile() {
         // open file
         // read data about buyer requests and seller items
-        // remove leader from map if seller
+        // initialize queue with requests
+        String outputPath = "sellerInfo.txt";
+        File file = new File(outputPath);
+        BufferedWriter bf = null;
+        try {
+            // create new BufferedWriter for the output file
+            bf = new BufferedWriter(new FileWriter(file));
+            for (Map.Entry<Integer, HashMap<String,Integer>> entry : PeerCommunication.sellerItemCountMap.entrySet()) {
+                for(Map.Entry<String,Integer> entry1: entry.getValue().entrySet()){
+                    bf.write(entry.getKey() + ":");
+                    bf.write(entry1.getKey());
+                    bf.write(",");
+                    bf.write(entry1.getValue());
+                    bf.newLine();
+                }
+            }
+            bf.flush();
+            bf.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
+
 
     public class ProcessThread extends Thread{
         public void run() {
@@ -75,10 +143,8 @@ public class Leader {
         System.out.println("Selling requested item" + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + "from sellerID"+ sellerID);
         // update trader sellerItemCountMap
 
-    }
 
-    public void processBuyMessage(Message m) {
-        priorityQueue.add(m);
+
     }
 
     public void sendTransactionAck(int buyerID, int sellerID) throws MalformedURLException {

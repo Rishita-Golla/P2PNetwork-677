@@ -14,6 +14,9 @@ public class PeerCommunication {
     public static HashMap<Integer, String> rolesMap = new HashMap<Integer, String>();
     public static List<String> processedLookUps = new ArrayList<>();
     static SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+
+    public static HashMap<Integer, HashMap<String, Integer>> sellerItemCountMap = new HashMap<>(); //initialize it (PeerComm) or keep it with trader
+
     static Date date = new Date(System.currentTimeMillis());
     public static int leaderID = 0;
     public static Leader leader = null;
@@ -106,6 +109,10 @@ public class PeerCommunication {
             leader.readDataFromFile();
         }else {
             if(nodeID == leaderID) {
+                //pick randome item
+                //set seller ID to process
+                //update seller map
+
                 List<Integer> neighbours =  neighborPeerIDs.get(nodeID);
                 for(int node: neighbours) {
                     if(!message.getPath().contains(node)) {
@@ -138,8 +145,10 @@ public class PeerCommunication {
     public static String checkLeaderStatus() {
         if(leader.processedRequests <= 10){
             return "OK";
-        }else
+        }else {
+            leader.writeDataToFile();
             return "DOWN";
+        }
     }
 
     protected static void sendBuyMessage(Message m) {
