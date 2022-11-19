@@ -1,12 +1,6 @@
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.*;
 import java.io.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class Leader extends PeerCommunication {
@@ -14,12 +8,10 @@ public class Leader extends PeerCommunication {
     public static int leaderID;
     public static PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
     static int processedRequestsCount;
-    public HashSet<String> requestsInQueue = new HashSet<>();
 
-    public Leader(int leaderID) throws MalformedURLException {
+    public Leader(int leaderID) {
         Leader.leaderID = leaderID;
         processedRequestsCount = 0;
-        System.out.println("In Leader constructor");
         readDataFromFile();
         new ProcessThread().start();
     }
@@ -33,7 +25,7 @@ public class Leader extends PeerCommunication {
     }
 
     public void readDataFromFile() {
-        System.out.println("In readDataFromFile");
+       // System.out.println("In readDataFromFile");
         BufferedReader br = null;
         try {
             String outputPath = "src/sellerInfo.txt";
@@ -65,7 +57,7 @@ public class Leader extends PeerCommunication {
                 }
             }
             br.close();
-            System.out.println("SellerItemCountMap"+PeerCommunication.sellerItemCountMap);
+            System.out.println("Sellers registered with leader successfully:  "+PeerCommunication.sellerItemCountMap);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -116,19 +108,17 @@ public class Leader extends PeerCommunication {
     private  void checkQueueMessages() throws MalformedURLException {
        // CompletableFuture.runAsync(PeerCommunication::processQueue);
         if(Leader.priorityQueue.size() > 1) {
-            System.out.println("checkQueueMessages size"+ Leader.priorityQueue.size());
+            System.out.println("Current queue size is: "+ Leader.priorityQueue.size() + " processing queue messages.");
             Message m = Leader.priorityQueue.poll();
             if(processQueueMessage(m)) {
                 processedRequestsCount++;
-            } else {
-                System.out.println("Didn't process leader's previous buy requests");
             }
         }
     }
 
     private  boolean processQueueMessage(Message m) throws MalformedURLException {
 
-        System.out.println("Inside the process Queue method the buyer ID is:" +m.getBuyerID());
+        System.out.println("Started processing request of buyerID: " +m.getBuyerID());
         if(m.getBuyerID() == Leader.leaderID)
             return false;
 
@@ -150,34 +140,22 @@ public class Leader extends PeerCommunication {
 
         if(foundSeller) {
             totalIncome = sellItemToBuyer(sellerID, m);
-            sendTransactionAck(m.getBuyerID(), sellerID, (int) (totalIncome - 0.2*totalIncome));
+            PeerCommunication.sendTransactionAck(m.getBuyerID(), sellerID, (int) (totalIncome - 0.2*totalIncome));
         }
         return foundSeller;
     }
 
-    private  int sellItemToBuyer(int sellerID, Message m) throws MalformedURLException {
-        System.out.println("Selling requested item" + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + "from sellerID"+ sellerID);
+    private int sellItemToBuyer(int sellerID, Message m) {
         HashMap<String, Integer> map = PeerCommunication.sellerItemCountMap.get(sellerID);
         int count = map.get(m.getRequestedItem());
         map.put(m.getRequestedItem(), --count);
-        String sellerItem = map.keySet().iterator().next();
-        return Constants.SELLER_PURCHASE_PRICES.get(sellerItem);
-    }
-
-    public  void sendTransactionAck(int buyerID, int sellerID, int income) throws MalformedURLException {
-        List<Integer> peerIDs = List.of(buyerID, sellerID);
-        for (int peerID : peerIDs) {
-            URL url = new URL(PeerCommunication.peerIdURLMap.get(peerID));
-            String role = PeerCommunication.rolesMap.get(peerID);
-            if(role.equals("buyer"))
-                income = 0;
-            try {
-                Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
-                RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
-                remoteInterface.sendTransactionAck(role, true, income); // for buyer send 0
-            } catch (RemoteException | NotBoundException e) {
-                e.printStackTrace();
-            }
+        if(count == 0){
+            PeerCommunication.sellerItemCountMap.remove(sellerID);
+        }else{
+            PeerCommunication.sellerItemCountMap.put(sellerID,map);
         }
+        System.out.println("Sold requested item " + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + " from sellerID: "+ sellerID);
+        int income = Constants.SELLER_PURCHASE_PRICES.get(m.getRequestedItem());
+        return income;
     }
 }

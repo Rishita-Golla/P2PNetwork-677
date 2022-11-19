@@ -99,7 +99,7 @@ public class PeerCommunication {
      */
 
     public static void sendLeaderIDBackwards(ElectionMessage message, int leaderID) {
-        System.out.println("Path of message before removal"+ message.getPath());
+        // System.out.println("Path of message before removal"+ message.getPath());
         if(message.peerIDs.size() != 0){
             int nodeID = message.removeLastNodeInPath();
             Leader.leaderID = leaderID;
@@ -120,10 +120,9 @@ public class PeerCommunication {
 
         //if msg already contains this node we should stop
         if (message.peerIDs.contains(nodeID)) {
-            System.out.println("I am at the initial node. Election should stop.");
             Leader.leaderID = Collections.max(message.peerIDs);
+            System.out.println("I am at the initial node. Election should stop. Elected node is: " + Leader.leaderID);
             leader = new Leader(Leader.leaderID);
-            System.out.println("Elected node is "+Leader.leaderID );
             sendLeaderIDBackwards(message, Leader.leaderID);
         }else {
             if(nodeID == Leader.leaderID) {
@@ -139,7 +138,6 @@ public class PeerCommunication {
                 }
             } else{
                 message.peerIDs.add(nodeID);
-                System.out.println("At node ID: "+nodeID +" sending election request forward.");
                 if(nodeID == peerIdURLMap.size()){
                     maxNodeID = 1;
                 }else if(nodeID == 1){
@@ -148,6 +146,7 @@ public class PeerCommunication {
                     maxNodeID = Collections.max(neighborPeerIDs.get(nodeID));
                 }
             }
+            System.out.println("At node ID: "+nodeID +" sending election request forward to: " + maxNodeID);
             URL url = new URL(peerIdURLMap.get(maxNodeID));
             try {
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
@@ -181,13 +180,9 @@ public class PeerCommunication {
     public static void addRequestToQueue(Message m) {
         if(Leader.priorityQueue != null) {
             Leader.priorityQueue.add(m);
-            //System.out.println("Added buyer's message to trader");
-            System.out.println("Adding request of buyer ID:" + m.getBuyerID());
-            System.out.println("size of queue:" + Leader.priorityQueue.size());
+            System.out.println("Adding request of buyer ID:" + m.getBuyerID() + " to the queue");
+            //System.out.println("size of queue:" + Leader.priorityQueue.size());
         }
-//        if(Leader.priorityQueue.size() == 10) {
-//            processQueue();
-//        }
     }
 
     public static void processQueue() {
@@ -195,6 +190,24 @@ public class PeerCommunication {
         while (Leader.priorityQueue.size() > 1) {
             Message m = Leader.priorityQueue.poll();
             System.out.println("Message is "+ m.getBuyerID() + m.getLookUpId());
+        }
+    }
+
+    public static void sendTransactionAck(int buyerID, int sellerID, int income) throws MalformedURLException {
+       //System.out.println("Inside sendTransactionAck");
+        List<Integer> peerIDs = List.of(buyerID, sellerID);
+        for (int peerID : peerIDs) {
+            URL url = new URL(PeerCommunication.peerIdURLMap.get(peerID));
+            String role = PeerCommunication.rolesMap.get(peerID);
+            if(role.equals("buyer"))
+                income = 0;
+            try {
+                Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+                RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+                remoteInterface.sendTransactionAck(role, true, income); // for buyer send 0
+            } catch (RemoteException | NotBoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

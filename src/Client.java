@@ -100,7 +100,7 @@ public class Client {
 
         Thread.sleep(3000);
 
-        while(true) {
+        while(Leader.leaderID != buyer.buyerID) {
 
             try {
                 System.out.println(formatter.format(date) + " Thread sleep - 2 seconds");
@@ -108,28 +108,23 @@ public class Client {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-            System.out.println("The leader is: "+ Leader.leaderID);
+            //System.out.println("The leader is: " + Leader.leaderID);
             // starting buyer lookup
-            if(buyer.buyerID == Leader.leaderID) {
-
-                //process th queue
-            }
-            if (onlyBuyer) {
-                try {
-                    buyer.startLookUpWithTrader();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw e;
-                }
-            } else {
-                try{
-                    buyerAndSeller.startLookUpWithTrader();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw e;
+                if (onlyBuyer) {
+                    try {
+                        buyer.startLookUpWithTrader();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw e;
+                    }
+                } else {
+                    try {
+                        buyerAndSeller.startLookUpWithTrader();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw e;
+                    }
                 }
             }
         }
-
-    }
 }

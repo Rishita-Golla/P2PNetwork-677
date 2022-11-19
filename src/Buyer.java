@@ -125,10 +125,8 @@ public class Buyer extends PeerCommunication{
 
         System.out.println(formatter.format(date)+" Started a new lookUp with lookUp Id: " + lookupId + ", requested item: "+ m.getRequestedItem());
 
-        sendMsg(m);
-
         if(checkStatusOfLeader().equals("OK")) {
-            //sendTimeStampUpdate(buyerID);
+            sendTimeStampUpdate(buyerID);
             sendMsg(m);
         }else if (checkStatusOfLeader().equals("DOWN")) {
             //if the request has timed out beyond MAX Value start re-election
@@ -186,7 +184,6 @@ public class Buyer extends PeerCommunication{
     public void receiveTransactionAck(boolean ack) {
         if(ack) {
             System.out.println("Buyer " + buyerID + " bought buyer item " + buyerItem);
-            System.out.println("Picking up a new buyer item");
             pickNewBuyerItem();
         }
     }

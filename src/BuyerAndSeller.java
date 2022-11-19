@@ -198,7 +198,7 @@ public class BuyerAndSeller extends PeerCommunication {
             pickNewBuyerItem();
         } else {
             System.out.println("Sold item" + Seller.sellerItem);
-            this.income += income; // check
+            this.income += income;
             System.out.println("Seller income for sellerID"+ Seller.sellerID + "is"+ this.income);
         }
     }
