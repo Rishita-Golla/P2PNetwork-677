@@ -127,14 +127,14 @@ public class Buyer extends PeerCommunication{
 
         sendMsg(m);
 
-//        if(checkStatusOfLeader().equals("OK")) {
-//            sendTimeStampUpdate(buyerID);
-//            sendBuyMessageToTrader(m);
-//        }else if (checkStatusOfLeader().equals("DOWN")) {
-//            //if the request has timed out beyond MAX Value start re-election
-//            ElectionMessage message = new ElectionMessage();
-//            PeerCommunication.sendLeaderElectionMsg(message, buyerID);
-//        }
+        if(checkStatusOfLeader().equals("OK")) {
+            //sendTimeStampUpdate(buyerID);
+            sendMsg(m);
+        }else if (checkStatusOfLeader().equals("DOWN")) {
+            //if the request has timed out beyond MAX Value start re-election
+            ElectionMessage message = new ElectionMessage();
+            PeerCommunication.sendLeaderElectionMsg(message, buyerID);
+        }
     }
 
     // To avoid bottleneck add message to trader's queue directly
@@ -172,12 +172,11 @@ public class Buyer extends PeerCommunication{
 
     public void sendMsg(Message message) throws MalformedURLException {
 
-        URL url = new URL(peerIdURLMap.get(PeerCommunication.leaderID));
+        URL url = new URL(peerIdURLMap.get(Leader.leaderID));
         try {
             Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
             RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
-            boolean val = remoteInterface.addRequestToQueue(message);
-            System.out.println("Added to queue:"+val);
+            remoteInterface.addRequestToQueue(message);
         }
         catch (RemoteException | NotBoundException e) {
             e.printStackTrace();

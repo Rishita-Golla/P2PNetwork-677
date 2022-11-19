@@ -18,8 +18,7 @@ public class PeerCommunication {
     public static HashMap<Integer, HashMap<String, Integer>> sellerItemCountMap = new HashMap<>(); //initialize it (PeerComm) or keep it with trader
 
     static Date date = new Date(System.currentTimeMillis());
-    public static int leaderID = 0;
-    public static Leader leader = null;
+    static Leader leader;
 
     public PeerCommunication() {
 
@@ -103,14 +102,12 @@ public class PeerCommunication {
         System.out.println("Path of message before removal"+ message.getPath());
         if(message.peerIDs.size() != 0){
             int nodeID = message.removeLastNodeInPath();
-            System.out.println("The leader ID is propogated back to nodeID:"+nodeID);
-            PeerCommunication.leaderID = leaderID;
+            Leader.leaderID = leaderID;
             try {
                 URL url = new URL(peerIdURLMap.get(nodeID));
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
                 RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
                 remoteInterface.sendLeaderIDBackwards(message, leaderID);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -124,14 +121,13 @@ public class PeerCommunication {
         //if msg already contains this node we should stop
         if (message.peerIDs.contains(nodeID)) {
             System.out.println("I am at the initial node. Election should stop.");
-            leaderID = Collections.max(message.peerIDs);
-            System.out.println("Elected node is "+leaderID);
-            //Leader.leaderID = leaderID;
-            leader = new Leader(leaderID);
-            sendLeaderIDBackwards(message, leaderID);
+            Leader.leaderID = Collections.max(message.peerIDs);
+            leader = new Leader(Leader.leaderID);
+            System.out.println("Elected node is "+Leader.leaderID );
+            sendLeaderIDBackwards(message, Leader.leaderID);
         }else {
-            if(nodeID == leaderID) {
-                //pick randome item
+            if(nodeID == Leader.leaderID) {
+                //pick random item
                 //set seller ID to process
                 //update seller map
 
@@ -166,7 +162,7 @@ public class PeerCommunication {
 
     public static String checkLeaderStatus() {
         System.out.println("Check status leaderID"+Leader.leaderID);
-        if(leader.processedRequestsCount <= 10){
+        if(Leader.processedRequestsCount <= 2){
             return "OK";
         }else {
             leader.writeDataToFile();
@@ -176,21 +172,29 @@ public class PeerCommunication {
 
     protected static void sendBuyMessage(Message m) throws MalformedURLException {
         //String checkString = m.getBuyerID()+"-"+m.
-        if(leader != null && leader.priorityQueue != null) {
-            leader.priorityQueue.add(m);
+        if(leader != null && Leader.priorityQueue != null) {
+            Leader.priorityQueue.add(m);
             System.out.println("Added buyer's message to trader");
         }
     }
 
-    public static boolean addRequestToQueue(Message m) {
+    public static void addRequestToQueue(Message m) {
         if(Leader.priorityQueue != null) {
             Leader.priorityQueue.add(m);
             //System.out.println("Added buyer's message to trader");
             System.out.println("Adding request of buyer ID:" + m.getBuyerID());
             System.out.println("size of queue:" + Leader.priorityQueue.size());
-            return true;
         }
-        return false;
+//        if(Leader.priorityQueue.size() == 10) {
+//            processQueue();
+//        }
     }
 
+    public static void processQueue() {
+        System.out.println("Processing queueu");
+        while (Leader.priorityQueue.size() > 1) {
+            Message m = Leader.priorityQueue.poll();
+            System.out.println("Message is "+ m.getBuyerID() + m.getLookUpId());
+        }
+    }
 }

@@ -130,8 +130,8 @@ class RemoteInterfaceImpl implements RemoteInterface{
     }
 
     @Override
-    public boolean addRequestToQueue(Message message) throws RemoteException, MalformedURLException {
-        return PeerCommunication.addRequestToQueue(message);
+    public void addRequestToQueue(Message message) throws RemoteException {
+        PeerCommunication.addRequestToQueue(message);
     }
 }
 

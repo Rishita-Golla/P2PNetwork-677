@@ -4,13 +4,13 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface RemoteInterface extends Remote {
-    public void checkOrBroadcastMessage(Message m, int peerID, String role) throws RemoteException, MalformedURLException;
-    public boolean sellItem(String requestedItem, String role) throws RemoteException;
-    public void replyBackwards(Message m, String role) throws RemoteException;
-    public void sendTimeStampUpdate(int timestamp, String role) throws RemoteException;
-    public void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, NotBoundException, InterruptedException;
-    public void sendTransactionAck(String role, boolean ack, int income) throws RemoteException;
+    void checkOrBroadcastMessage(Message m, int peerID, String role) throws RemoteException, MalformedURLException;
+    boolean sellItem(String requestedItem, String role) throws RemoteException;
+    void replyBackwards(Message m, String role) throws RemoteException;
+    void sendTimeStampUpdate(int timestamp, String role) throws RemoteException;
+    void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws RemoteException, MalformedURLException, NotBoundException, InterruptedException;
+    void sendTransactionAck(String role, boolean ack, int income) throws RemoteException;
 
     void sendLeaderIDBackwards(ElectionMessage message, int leaderID) throws RemoteException;
-    public boolean addRequestToQueue(Message message) throws RemoteException, MalformedURLException;
+    void addRequestToQueue(Message message) throws RemoteException;
 }

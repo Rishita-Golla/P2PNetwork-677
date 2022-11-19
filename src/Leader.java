@@ -6,33 +6,34 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 import java.io.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class Leader {
+public class Leader extends PeerCommunication {
 
     public static int leaderID;
     public static PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
-    public static int processedRequests;
     static int processedRequestsCount;
     public HashSet<String> requestsInQueue = new HashSet<>();
 
-    Leader(int leaderID) throws InterruptedException {
+    public Leader(int leaderID) throws MalformedURLException {
         Leader.leaderID = leaderID;
         processedRequestsCount = 0;
+        System.out.println("In Leader constructor");
         readDataFromFile();
-        Thread.sleep(2000);
         new ProcessThread().start();
     }
 
     public int getLeaderID() {
-        return this.leaderID;
+        return leaderID;
     }
 
     public void setLeaderID(int leaderID) {
-        this.leaderID = leaderID;
+        Leader.leaderID = leaderID;
     }
 
     public void readDataFromFile() {
+        System.out.println("In readDataFromFile");
         BufferedReader br = null;
         try {
             String outputPath = "src/sellerInfo.txt";
@@ -41,7 +42,7 @@ public class Leader {
             br = new BufferedReader(new FileReader(file));
             String line = null;
             int sellerID = -1;
-            HashMap<String,Integer> map = new HashMap();
+            HashMap<String,Integer> map = new HashMap<>();
             while ((line = br.readLine()) != null) {
                 // split the line by :
                 if(line.equals("*")) {
@@ -104,32 +105,30 @@ public class Leader {
             while(true){
                 try {
                     checkQueueMessages();
+                    Thread.sleep(1000);
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-
             }
         }
     }
 
     private  void checkQueueMessages() throws MalformedURLException {
-
+       // CompletableFuture.runAsync(PeerCommunication::processQueue);
         if(Leader.priorityQueue.size() > 1) {
+            System.out.println("checkQueueMessages size"+ Leader.priorityQueue.size());
             Message m = Leader.priorityQueue.poll();
             if(processQueueMessage(m)) {
-                Buyer.processBuy(); // display bought item and add lookUp Id to processed LookUps
-                processedRequests++;
+                processedRequestsCount++;
             } else {
                 System.out.println("Didn't process leader's previous buy requests");
             }
-//        } else {
-//            System.out.println("No messages to process in queue");
         }
     }
 
     private  boolean processQueueMessage(Message m) throws MalformedURLException {
 
-        System.out.println("Inside the proccessQueue methos the buyer ID is:" +m.getBuyerID());
+        System.out.println("Inside the process Queue method the buyer ID is:" +m.getBuyerID());
         if(m.getBuyerID() == Leader.leaderID)
             return false;
 
@@ -139,7 +138,7 @@ public class Leader {
         int totalIncome = 0;
 
         for(Map.Entry<Integer, HashMap<String, Integer>> entry : PeerCommunication.sellerItemCountMap.entrySet()) {
-            if(entry.getKey() == PeerCommunication.leaderID)
+            if(entry.getKey() == Leader.leaderID)
                 continue;
             for(Map.Entry<String, Integer> itemAndCountMap : entry.getValue().entrySet())
                 if(itemAndCountMap.getKey().equals(requestedItem) && itemAndCountMap.getValue() > 0) {

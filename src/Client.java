@@ -108,8 +108,12 @@ public class Client {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-            System.out.println("The leader is:"+ Leader.leaderID);
+            System.out.println("The leader is: "+ Leader.leaderID);
             // starting buyer lookup
+            if(buyer.buyerID == Leader.leaderID) {
+
+                //process th queue
+            }
             if (onlyBuyer) {
                 try {
                     buyer.startLookUpWithTrader();
