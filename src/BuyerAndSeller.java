@@ -133,6 +133,18 @@ public class BuyerAndSeller extends PeerCommunication {
         }
     }
 
+    public void discardReply(String lookupId) {
+        try {
+            semaphore.acquire();
+            System.out.println(formatter.format(date)+ " Timed out request for "+ peerID + " and lookUp "+ lookupId);
+            timedOutReplies.add(lookupId);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        semaphore.release();
+    }
+
+    // method to create a new message and send message to leader
     public void startLookUpWithTrader() throws Exception {
         Message m = new Message();
         String lookupId = UUID.randomUUID().toString();
@@ -164,21 +176,12 @@ public class BuyerAndSeller extends PeerCommunication {
         });
     }
 
-    public void discardReply(String lookupId) {
-        try {
-            semaphore.acquire();
-            System.out.println(formatter.format(date)+ " Timed out request for "+ peerID + " and lookUp "+ lookupId);
-            timedOutReplies.add(lookupId);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        semaphore.release();
-    }
-
+    // Receives timestamp from peer and updates local clock.
     public void receiveTimeStampUpdate(int timestamp) {
         lamportClock.receiveUpdate(timestamp);
     }
 
+    // check leader status as OK or DOWN and report it to client
     public String checkStatusOfLeader() {
         return PeerCommunication.checkLeaderStatus();
     }
@@ -195,6 +198,7 @@ public class BuyerAndSeller extends PeerCommunication {
         }
     }
 
+    // RMI call to send and add buy to trader's queue
     public void sendMsg(Message message) throws MalformedURLException {
 
         URL url = new URL(peerIdURLMap.get(Leader.leaderID));

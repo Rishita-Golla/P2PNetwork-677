@@ -18,14 +18,12 @@ public class LamportClock {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
-        this.timestamp = timestamp;
-    }
-
+    // update local clock by comparing node's timestamp and neighbour's timestamp
     public void receiveUpdate(int receiveTimestamp) {
         this.timestamp = Math.max(this.timestamp, receiveTimestamp) + 1;
     }
 
+    // send timestamp update to all peers using RMI call
     public void sendTimestampUpdate(int buyerID) throws MalformedURLException {
 
         for(Map.Entry<Integer, String> entry : PeerCommunication.peerIdURLMap.entrySet()) {

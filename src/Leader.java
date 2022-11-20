@@ -22,10 +22,7 @@ public class Leader extends PeerCommunication {
         return leaderID;
     }
 
-    public void setLeaderID(int leaderID) {
-        Leader.leaderID = leaderID;
-    }
-
+    // Update seller, products info from the text file each time a new leader is elected
     public void readDataFromFile() {
        // System.out.println("In readDataFromFile");
         BufferedReader br = null;
@@ -65,10 +62,9 @@ public class Leader extends PeerCommunication {
         }
     }
 
+    // write seller, products info to the text file before a leader goes down
     public void writeDataToFile() {
         // open file
-        // read data about buyer requests and seller items
-        // initialize queue with requests
         String outputPath = "sellerInfo.txt";
         File file = new File(outputPath);
         BufferedWriter bf = null;
@@ -93,6 +89,7 @@ public class Leader extends PeerCommunication {
         }
     }
 
+    // start a new thread when the leader is elected to continuously poll for messages
     public class ProcessThread extends Thread{
         public void run() {
             while(true){
@@ -106,8 +103,8 @@ public class Leader extends PeerCommunication {
         }
     }
 
+    // Poll message with the lowest timestamp and start processing it
     private  void checkQueueMessages() throws MalformedURLException {
-       // CompletableFuture.runAsync(PeerCommunication::processQueue);
         if(Leader.priorityQueue.size() > 1) {
             System.out.println(formatter.format(date)+" Current queue size is: "+ Leader.priorityQueue.size() + " processing queue messages.");
             Message m = Leader.priorityQueue.poll();
@@ -117,6 +114,8 @@ public class Leader extends PeerCommunication {
         }
     }
 
+    // Check if a seller is available for the buy request
+    // If a seller is available, initiate transaction, send ack on successful transaction
     private  boolean processQueueMessage(Message m) throws MalformedURLException {
 
         System.out.println(formatter.format(date)+" Started processing request of buyerID: " +m.getBuyerID());
@@ -146,6 +145,7 @@ public class Leader extends PeerCommunication {
         return foundSeller;
     }
 
+    // update seller, product info after selling an item
     private int sellItemToBuyer(int sellerID, Message m) {
         HashMap<String, Integer> map = PeerCommunication.sellerItemCountMap.get(sellerID);
         int count = map.get(m.getRequestedItem());
@@ -157,7 +157,6 @@ public class Leader extends PeerCommunication {
         }
         System.out.println(formatter.format(date)+" Sold requested item " + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + " from sellerID: "+ sellerID);
         System.out.println(formatter.format(date)+" Seller and Item map: "+ PeerCommunication.sellerItemCountMap);
-        int income = Constants.SELLER_PURCHASE_PRICES.get(m.getRequestedItem());
-        return income;
+        return Constants.SELLER_PURCHASE_PRICES.get(m.getRequestedItem());
     }
 }

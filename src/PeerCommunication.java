@@ -98,6 +98,7 @@ public class PeerCommunication {
      * LAB 2 CODE
      */
 
+    // propagate leader ID to all peers once a leader is elected
     public static void sendLeaderIDBackwards(ElectionMessage message, int leaderID) {
         // System.out.println("Path of message before removal"+ message.getPath());
         if(message.peerIDs.size() != 0){
@@ -114,6 +115,7 @@ public class PeerCommunication {
         }
     }
 
+    // Algorithm for leader election - ring election method
     public static void sendLeaderElectionMsg(ElectionMessage message, int nodeID) throws MalformedURLException, InterruptedException {
 
         int maxNodeID = 0; //next node ID to send call to
@@ -126,10 +128,6 @@ public class PeerCommunication {
             sendLeaderIDBackwards(message, Leader.leaderID);
         }else {
             if(nodeID == Leader.leaderID) {
-                //pick random item
-                //set seller ID to process
-                //update seller map
-
                 List<Integer> neighbours =  neighborPeerIDs.get(nodeID);
                 for(int node: neighbours) {
                     if(!message.getPath().contains(node)) {
@@ -159,9 +157,10 @@ public class PeerCommunication {
         }
     }
 
+    // check leader status as OK or DOWN and report it to client
     public static String checkLeaderStatus() {
         System.out.println(formatter.format(date)+" Check status leaderID: "+Leader.leaderID);
-        if(Leader.processedRequestsCount <= 2){
+        if(Leader.processedRequestsCount <= 10){
             return "OK";
         }else {
             leader.writeDataToFile();
@@ -169,14 +168,7 @@ public class PeerCommunication {
         }
     }
 
-    protected static void sendBuyMessage(Message m) throws MalformedURLException {
-        //String checkString = m.getBuyerID()+"-"+m.
-        if(leader != null && Leader.priorityQueue != null) {
-            Leader.priorityQueue.add(m);
-            System.out.println(formatter.format(date)+" Added buyer's message to trader");
-        }
-    }
-
+    // add buy requests in trader's queue
     public static void addRequestToQueue(Message m) {
         if(Leader.priorityQueue != null) {
             Leader.priorityQueue.add(m);
@@ -185,6 +177,7 @@ public class PeerCommunication {
         }
     }
 
+    // send transaction ack to both buyer and seller
     public static void sendTransactionAck(int buyerID, int sellerID, int income) throws MalformedURLException {
        //System.out.println("Inside sendTransactionAck");
         List<Integer> peerIDs = List.of(buyerID, sellerID);

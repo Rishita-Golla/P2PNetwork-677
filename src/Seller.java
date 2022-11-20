@@ -54,19 +54,18 @@ public class Seller extends PeerCommunication{
         replyBackwards(m);
     }
 
-    /**
-     * LAB 2 CODE
-     */
+    // Receives timestamp from peer and updates the corresponding local clock.
     public static void receiveTimeStampUpdate(int timestamp) {
         lamportClock.receiveUpdate(timestamp);
     }
 
+    // After a transaction is successful, the trader sends an ack to seller
     public static void receiveTransactionAck(int income) {
         System.out.println(formatter.format(date)+" Sold item" + Seller.sellerItem);
         Seller.income += income;
-        // System.out.println("Seller income for sellerID"+ sellerID + "is"+ Seller.income);
     }
 
+    // Stock seller items in a cyclic order if all items are sold
     public static void stockItems() {
         int index = Constants.POSSIBLE_ITEMS.indexOf(sellerItem);
         sellerItem = Constants.POSSIBLE_ITEMS.get((index+1)%3);

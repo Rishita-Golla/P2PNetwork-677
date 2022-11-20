@@ -143,6 +143,7 @@ public class Buyer extends PeerCommunication{
         System.out.println(formatter.format(date)+" Picked up "+ buyerItem+ " as new buyer item for ID: "+buyerID);
     }
 
+    // Receives timestamp from peer and updates local clock.
     public void receiveTimeStampUpdate(int timestamp) {
         lamportClock.receiveUpdate(timestamp);
     }
@@ -159,10 +160,12 @@ public class Buyer extends PeerCommunication{
         });
     }
 
+    // check leader status as OK or DOWN and report it to client
     public String checkStatusOfLeader() {
         return PeerCommunication.checkLeaderStatus();
     }
 
+    // RMI call to send and add buy to trader's queue
     public void sendMsg(Message message) throws MalformedURLException {
 
         URL url = new URL(peerIdURLMap.get(Leader.leaderID));
@@ -176,6 +179,7 @@ public class Buyer extends PeerCommunication{
         }
     }
 
+    // receive bough ack from the trader
     public void receiveTransactionAck(boolean ack) {
         if(ack) {
             System.out.println("Buyer " + buyerID + " bought buyer item " + buyerItem);
