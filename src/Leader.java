@@ -1,4 +1,5 @@
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
@@ -8,6 +9,7 @@ public class Leader extends PeerCommunication {
     public static int leaderID;
     public static PriorityQueue<Message> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Message::getTimestamp));
     static int processedRequestsCount;
+    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 
     public Leader(int leaderID) {
         Leader.leaderID = leaderID;
@@ -40,7 +42,6 @@ public class Leader extends PeerCommunication {
                 if(line.equals("*")) {
                     HashMap mapCopy = (HashMap) map.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
                     PeerCommunication.sellerItemCountMap.put(sellerID, mapCopy);
-                    //System.out.println("SellerItemCountMap"+sellerItemCountMap);
                     map.clear();
                 }else{
                     String[] parts = line.split(":");
@@ -57,7 +58,7 @@ public class Leader extends PeerCommunication {
                 }
             }
             br.close();
-            System.out.println("Sellers registered with leader successfully:  "+PeerCommunication.sellerItemCountMap);
+            System.out.println(formatter.format(date)+" Sellers registered with leader successfully:  "+PeerCommunication.sellerItemCountMap);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -108,7 +109,7 @@ public class Leader extends PeerCommunication {
     private  void checkQueueMessages() throws MalformedURLException {
        // CompletableFuture.runAsync(PeerCommunication::processQueue);
         if(Leader.priorityQueue.size() > 1) {
-            System.out.println("Current queue size is: "+ Leader.priorityQueue.size() + " processing queue messages.");
+            System.out.println(formatter.format(date)+" Current queue size is: "+ Leader.priorityQueue.size() + " processing queue messages.");
             Message m = Leader.priorityQueue.poll();
             if(processQueueMessage(m)) {
                 processedRequestsCount++;
@@ -118,7 +119,7 @@ public class Leader extends PeerCommunication {
 
     private  boolean processQueueMessage(Message m) throws MalformedURLException {
 
-        System.out.println("Started processing request of buyerID: " +m.getBuyerID());
+        System.out.println(formatter.format(date)+" Started processing request of buyerID: " +m.getBuyerID());
         if(m.getBuyerID() == Leader.leaderID)
             return false;
 
@@ -154,7 +155,8 @@ public class Leader extends PeerCommunication {
         }else{
             PeerCommunication.sellerItemCountMap.put(sellerID,map);
         }
-        System.out.println("Sold requested item " + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + " from sellerID: "+ sellerID);
+        System.out.println(formatter.format(date)+" Sold requested item " + m.getRequestedItem() + " to buyer: " + m.getBuyerID() + " from sellerID: "+ sellerID);
+        System.out.println(formatter.format(date)+" Seller and Item map: "+ PeerCommunication.sellerItemCountMap);
         int income = Constants.SELLER_PURCHASE_PRICES.get(m.getRequestedItem());
         return income;
     }

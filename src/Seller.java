@@ -40,7 +40,7 @@ public class Seller extends PeerCommunication{
                 currItemCount--;
                 successfulSell = true;
             }
-            System.out.println(formatter.format(date)+"Sold requested item - " + requestedItem + "!!");
+            System.out.println(formatter.format(date)+" Sold requested item - " + requestedItem + "!!");
             if (currItemCount == 0)
                 stockItems();
         } catch (InterruptedException e) {
@@ -62,15 +62,15 @@ public class Seller extends PeerCommunication{
     }
 
     public static void receiveTransactionAck(int income) {
-        System.out.println("Sold item" + Seller.sellerItem);
+        System.out.println(formatter.format(date)+" Sold item" + Seller.sellerItem);
         Seller.income += income;
-        System.out.println("Seller income for sellerID"+ sellerID + "is"+ Seller.income);
+        // System.out.println("Seller income for sellerID"+ sellerID + "is"+ Seller.income);
     }
 
     public static void stockItems() {
         int index = Constants.POSSIBLE_ITEMS.indexOf(sellerItem);
         sellerItem = Constants.POSSIBLE_ITEMS.get((index+1)%3);
-        System.out.println(formatter.format(date)+"Restocked items. Now selling item:"+sellerItem);
+        System.out.println(formatter.format(date)+" Restocked items. Now selling item:"+sellerItem);
         currItemCount = Constants.MAX_ITEM_COUNT;
     }
 }

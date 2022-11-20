@@ -121,7 +121,7 @@ public class PeerCommunication {
         //if msg already contains this node we should stop
         if (message.peerIDs.contains(nodeID)) {
             Leader.leaderID = Collections.max(message.peerIDs);
-            System.out.println("I am at the initial node. Election should stop. Elected node is: " + Leader.leaderID);
+            System.out.println(formatter.format(date)+" I am at the initial node. Election should stop. Elected node is: " + Leader.leaderID);
             leader = new Leader(Leader.leaderID);
             sendLeaderIDBackwards(message, Leader.leaderID);
         }else {
@@ -146,7 +146,7 @@ public class PeerCommunication {
                     maxNodeID = Collections.max(neighborPeerIDs.get(nodeID));
                 }
             }
-            System.out.println("At node ID: "+nodeID +" sending election request forward to: " + maxNodeID);
+            System.out.println(formatter.format(date)+" At node ID: "+nodeID +" sending election request forward to: " + maxNodeID);
             URL url = new URL(peerIdURLMap.get(maxNodeID));
             try {
                 Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
@@ -160,7 +160,7 @@ public class PeerCommunication {
     }
 
     public static String checkLeaderStatus() {
-        System.out.println("Check status leaderID"+Leader.leaderID);
+        System.out.println(formatter.format(date)+" Check status leaderID: "+Leader.leaderID);
         if(Leader.processedRequestsCount <= 2){
             return "OK";
         }else {
@@ -173,23 +173,15 @@ public class PeerCommunication {
         //String checkString = m.getBuyerID()+"-"+m.
         if(leader != null && Leader.priorityQueue != null) {
             Leader.priorityQueue.add(m);
-            System.out.println("Added buyer's message to trader");
+            System.out.println(formatter.format(date)+" Added buyer's message to trader");
         }
     }
 
     public static void addRequestToQueue(Message m) {
         if(Leader.priorityQueue != null) {
             Leader.priorityQueue.add(m);
-            System.out.println("Adding request of buyer ID:" + m.getBuyerID() + " to the queue");
+            System.out.println(formatter.format(date)+" Adding request of buyer ID:" + m.getBuyerID() + " to the queue");
             //System.out.println("size of queue:" + Leader.priorityQueue.size());
-        }
-    }
-
-    public static void processQueue() {
-        System.out.println("Processing queueu");
-        while (Leader.priorityQueue.size() > 1) {
-            Message m = Leader.priorityQueue.poll();
-            System.out.println("Message is "+ m.getBuyerID() + m.getLookUpId());
         }
     }
 
@@ -206,7 +198,7 @@ public class PeerCommunication {
                 RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
                 remoteInterface.sendTransactionAck(role, true, income); // for buyer send 0
             } catch (RemoteException | NotBoundException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
     }

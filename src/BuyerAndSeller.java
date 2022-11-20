@@ -1,5 +1,7 @@
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
@@ -32,10 +34,6 @@ public class BuyerAndSeller extends PeerCommunication {
         super(peerIdURLMap, neighborPeerIDs);
     }
 
-//    public static void setSellerItem(String itemName) {
-//        sellerItem = itemName;
-//    }
-
     public boolean buyItemDirectlyFromSeller(int sellerId) {
         System.out.println(formatter.format(date)+" Trying to buy item directly from Seller ID: " + sellerId);
         try {
@@ -51,9 +49,7 @@ public class BuyerAndSeller extends PeerCommunication {
     }
 
     public static boolean sellItem(String requestedItem, String role) {
-      //  System.out.println(formatter.format(date)+" Selling item "+requestedItem);
         if(!requestedItem.equals(sellerItem)) {
-      //      System.out.println(formatter.format(date)+" Items don't match in sellItem, returning ");
             return false;
         }
 
@@ -149,7 +145,7 @@ public class BuyerAndSeller extends PeerCommunication {
 
         if(checkStatusOfLeader().equals("OK")) {
             sendTimeStampUpdate(peerID);
-            sendBuyMessageToTrader(m);
+            sendMsg(m);
         }else if (checkStatusOfLeader().equals("DOWN")) {
             //if the request has timed out beyond MAX Value start re-election
             ElectionMessage message = new ElectionMessage();
@@ -166,10 +162,6 @@ public class BuyerAndSeller extends PeerCommunication {
                 e.printStackTrace();
             }
         });
-    }
-
-    private void sendBuyMessageToTrader(Message m) throws MalformedURLException {
-        PeerCommunication.sendBuyMessage(m);
     }
 
     public void discardReply(String lookupId) {
@@ -193,13 +185,26 @@ public class BuyerAndSeller extends PeerCommunication {
 
     public void receiveTransactionAck(int income) {
         if(income != 0) {
-            System.out.println("Sold item" + Seller.sellerItem);
-            System.out.println("Picking up a new buyer item");
+            System.out.println(formatter.format(date)+" Sold item" + Seller.sellerItem);
+            System.out.println(formatter.format(date)+" Picking up a new buyer item");
             pickNewBuyerItem();
         } else {
-            System.out.println("Sold item" + Seller.sellerItem);
+            System.out.println(formatter.format(date)+" Sold item" + Seller.sellerItem);
             this.income += income;
-            System.out.println("Seller income for sellerID"+ Seller.sellerID + "is"+ this.income);
+            System.out.println(formatter.format(date)+" Seller income for sellerID"+ Seller.sellerID + "is"+ this.income);
+        }
+    }
+
+    public void sendMsg(Message message) throws MalformedURLException {
+
+        URL url = new URL(peerIdURLMap.get(Leader.leaderID));
+        try {
+            Registry registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+            RemoteInterface remoteInterface = (RemoteInterface) registry.lookup("RemoteInterface");
+            remoteInterface.addRequestToQueue(message);
+        }
+        catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
         }
     }
 }

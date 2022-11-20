@@ -57,7 +57,7 @@ public class Buyer extends PeerCommunication{
         try {
             semaphore.acquire();
             if(timedOutReplies.contains(m.getLookUpId())) {
-                System.out.println(formatter.format(date)+"Ignoring timed out reply for: "+m.getLookUpId());
+                System.out.println(formatter.format(date)+" Ignoring timed out reply for: "+m.getLookUpId());
             }
             if (m.getPath().isEmpty()) { // reached initial buyer node
                 System.out.println(formatter.format(date)+" Reached initial buyer in reply backward path");
@@ -135,11 +135,6 @@ public class Buyer extends PeerCommunication{
         }
     }
 
-    // To avoid bottleneck add message to trader's queue directly
-    private void sendBuyMessageToTrader(Message m) throws MalformedURLException {
-        PeerCommunication.sendBuyMessage(m);
-    }
-
     // pick a new item in cyclic order
     public void pickNewBuyerItem() {
         int size = Constants.POSSIBLE_ITEMS.size();
@@ -159,7 +154,7 @@ public class Buyer extends PeerCommunication{
             try {
                 lamportClock.sendTimestampUpdate(buyerID);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             }
         });
     }
